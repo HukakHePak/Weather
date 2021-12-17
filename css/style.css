@@ -378,6 +378,8 @@ textarea {
 /*----------------------------------------------------------------
     GLOBAL CSS START
 */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital@1&display=swap');
   
 /* Box sizing rules */
 html {
@@ -391,7 +393,7 @@ html {
 }
 
 body {
-    font-family: 'Roboto';
+    font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-size: 18px;
     font-weight: normal;
@@ -425,48 +427,165 @@ body {
 
 .weather__deck {
     margin: auto;
-    display: table;
+    display: flex;
+    flex-direction: column;
     width: 600px;
     height: 435px;
-    column-span: 2;
+    border-top: black 1px solid; 
+    border-left: black 1px solid; 
 }
 
-.weather__deck .search {
-    
-    display:  table-row;
-    height: 40px;
-
-    background: blue;
-
-   
+.weather__deck .border {
+    border: 0;
+    border-right: black 1px solid; 
+    border-bottom: black 1px solid;  
 }
 
-.result__story__row {
-    
+.weather__deck .search {   
+    display: flex;
+    box-sizing:inherit;
+    padding: 0 15px;
+    justify-content: space-between;
+    align-items: center;
+    border-right: black 1px solid; 
+    border-bottom: black 1px solid;  
 }
 
+.weather__deck .search [type="text"] {
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 45px;
+    width: 100%;
+    border: 0;
+    padding: 0;
+}
+
+.weather__deck .search button {
+    display: block;
+    width: 30px;
+    height: 30px;
+    border: 0;
+    padding: 0;
+    background: url('../img/search-ico.svg');
+}
 
 .weather__deck .result {
-    
-    display: table-cell;
-
+    display: flex;
+    height: 100%;
 }
 
-.weather__deck .story {
+.weather__deck .presents {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-bottom: 0;
+}
 
-    display: table-cell;
+.weather__deck .description {
+    height: 100%;
+    border-right: 0;
+}
+
+.weather__deck .description > *, .weather__deck .description > div {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: none;
+}
+
+.weather__deck .description .active {
+    display: flex;
+}
+
+.weather__deck .description .now .temperature {
+    font-size: 70px;
+    line-height: 82px;
+    position: absolute;
+    top: 20px;
+    left: 23px;
+}
+
+.weather__deck .description .now .city {
+    position: absolute;
+    left: 12px;
+    bottom: 17px;
+    font-size: 24px;
+    line-height: 28px;
+}
+
+.weather__deck .description .now img:first-child {
+    margin: auto;
+}
+
+.weather__deck .description .now img:last-child {
+    position: absolute;
+    right: 26px;
+    bottom: 23px;
+}
+
+.weather__deck .description .forecast img {
+    margin: auto;
     width: 50%;
-    
-}
-.row {
-    display: table-row-group;
+    object-fit:contain;
 }
 
-.weather__deck .cell, .weather__deck {
-    border: black 1px solid; 
-    border-collapse: collapse;
+.weather__deck .presents .buttons {
+    display: flex;
+    width: 100%;
+    height: 45px;
 }
 
+.weather__deck .presents .buttons button {
+    width: 100%;
+    font-size: 18px;
+    line-height: 21px;
+    background: white;
+}
+
+.weather__deck .presents .buttons button.active {
+    background: #000000;
+    color: white;
+}
+
+.weather__deck .presents .buttons button:last-child {
+    border-right: 0;
+}
+
+.weather__deck .story, .weather__deck .details {   
+    width: 100%; 
+    display: flex;
+    flex-direction: column;
+}
+
+.weather__deck .story > span, .weather__deck .details > span {
+    height: 68px;
+    padding-left: 17px;
+    padding-bottom: 7px;
+    font-size: 24px;
+    border-right: none;
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-end;
+}
+
+.weather__deck .story ul, .weather__deck .details ul {
+    position: relative;
+    box-sizing: border-box;
+    padding-top: 35px;
+    padding-left: 18px;
+    font-size: 24px;
+    line-height: 28px;
+}
+
+.weather__deck .story li, .weather__deck .details li{
+    margin-bottom: 10px;
+}
+
+.weather__deck .story li:last-child, .weather__deck .details li:last-child {
+    margin: 0;
+}
 
 /*----------------------------------------------------------------
     WEATHER CSS FINISH

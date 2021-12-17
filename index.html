@@ -11,16 +11,51 @@
     <div class="wrapper">
         <div class="weather__frame">
             <div class="weather__deck">
-                <div class="search cell">
-aaaaaaaaaaa aaaaaaaaaaa aaaaaaa aaaaaaaaaaa aaaaaaaaaaaaaaaaaaa
-                </div>
-                
-                <div class="result cell">
-f
-                </div>
-                <div class="story cell">
-                    f
-                </div>
+                <form class="search">
+                    <input type="text" value="" placeholder="City">
+                    <button></button>
+                </form>
+
+                <div class="result">
+                    <div class="presents border">
+                        <div class="description border">
+                            <figure class="now ">
+                                <img src="./img/cloud-ico.svg" alt="current weather image">
+                                <div class="temperature"><span class="value">0</span>°</div>
+                                <span class="city">city</span>
+                                <img src="./img/heart-active-ico.svg" alt="favourite's heart">
+                            </figure>
+
+                            <div class="details ">
+                                <span>city</span>
+                                <ul class="stats">
+                                    <li>Temperature: <span class="value">0</span>°</li>
+                                    <li>Feels like: <span class="value">0</span>°</li>
+                                    <li>Weather: <span class="value">weather</span></li>
+                                    <li>Sunrise: <span class="value">00:00</span></li>
+                                    <li>Sunset: <span class="value">00:00</span></li>
+                                </ul>
+                            </div>
+
+                            <figure class="forecast ">
+                                <img src="./img/soon-img.png" alt="">
+                            </figure>                      
+                        </div>
+
+                        <nav class="buttons">
+                            <button class="border ">Now</button>
+                            <button class="border">Details</button>
+                            <button class="border">Forecast</button>
+                        </nav>
+                    </div>
+
+                    <div class="story border">
+                        <span class="border">Added Locations:</span>    
+                        <ul class="locations">
+                            <li></li>                                             
+                        </ul>                               
+                    </div> 
+                </div>       
             </div>
         </div>    
     </div> 
