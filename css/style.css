@@ -531,35 +531,35 @@ body {
     object-fit:contain;
 }
 
-.weather__deck .presents .buttons {
+.weather__deck .presents .selects {
     display: flex;
     width: 100%;
     height: 45px;
 }
 
-.weather__deck .presents .buttons button {
+.weather__deck .presents .selects button {
     width: 100%;
     font-size: 18px;
     line-height: 21px;
     background: white;
 }
 
-.weather__deck .presents .buttons button.active {
+.weather__deck .presents .selects button.active {
     background: #000000;
     color: white;
 }
 
-.weather__deck .presents .buttons button:last-child {
+.weather__deck .presents .selects button:last-child {
     border-right: 0;
 }
 
-.weather__deck .story, .weather__deck .details {   
+.weather__deck .favourite, .weather__deck .details {   
     width: 100%; 
     display: flex;
     flex-direction: column;
 }
 
-.weather__deck .story > span, .weather__deck .details > span {
+.weather__deck .favourite > span, .weather__deck .details > span {
     height: 68px;
     padding-left: 17px;
     padding-bottom: 7px;
@@ -570,7 +570,7 @@ body {
     align-items: flex-end;
 }
 
-.weather__deck .story ul, .weather__deck .details ul {
+.weather__deck .favourite ul, .weather__deck .details ul {
     position: relative;
     box-sizing: border-box;
     padding-top: 35px;
@@ -579,11 +579,11 @@ body {
     line-height: 28px;
 }
 
-.weather__deck .story li, .weather__deck .details li{
+.weather__deck .favourite li, .weather__deck .details li{
     margin-bottom: 10px;
 }
 
-.weather__deck .story li:last-child, .weather__deck .details li:last-child {
+.weather__deck .favourite li:last-child, .weather__deck .details li:last-child {
     margin: 0;
 }
 

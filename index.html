@@ -9,25 +9,25 @@
 </head>
 <body>
     <div class="wrapper">
-        <div class="weather__frame">
+        <div id="weather" class="weather__frame">
             <div class="weather__deck">
                 <form class="search">
-                    <input type="text" value="" placeholder="City">
-                    <button></button>
+                    <input name="city" type="text" value="" placeholder="City">
+                    <button name="submit"></button>
                 </form>
 
                 <div class="result">
                     <div class="presents border">
                         <div class="description border">
-                            <figure class="now ">
-                                <img src="./img/cloud-ico.svg" alt="current weather image">
+                            <figure class="now active">
+                                <img src="./img/cloud-ico.svg" alt="current weather image" class="value">
                                 <div class="temperature"><span class="value">0</span>°</div>
-                                <span class="city">city</span>
+                                <span class="city value">city</span>
                                 <img src="./img/heart-active-ico.svg" alt="favourite's heart">
                             </figure>
 
                             <div class="details ">
-                                <span>city</span>
+                                <span class="value">city</span>
                                 <ul class="stats">
                                     <li>Temperature: <span class="value">0</span>°</li>
                                     <li>Feels like: <span class="value">0</span>°</li>
@@ -42,17 +42,17 @@
                             </figure>                      
                         </div>
 
-                        <nav class="buttons">
-                            <button class="border ">Now</button>
+                        <nav class="selects">
+                            <button class="border">Now</button>
                             <button class="border">Details</button>
                             <button class="border">Forecast</button>
                         </nav>
                     </div>
 
-                    <div class="story border">
+                    <div class="favourite border">
                         <span class="border">Added Locations:</span>    
                         <ul class="locations">
-                            <li></li>                                             
+                            <li></li>                                          
                         </ul>                               
                     </div> 
                 </div>       
