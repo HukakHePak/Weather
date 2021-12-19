@@ -515,14 +515,24 @@ body {
     line-height: 28px;
 }
 
-.weather__deck .description .now img:first-child {
+.weather__deck .description .now img {
     margin: auto;
 }
 
-.weather__deck .description .now img:last-child {
+.weather__deck .description .now .like {
     position: absolute;
+    padding: 0;
     right: 26px;
     bottom: 23px;
+    border: 0;
+    background: url('../img/heart-active-ico.svg') no-repeat;
+    background-size: contain;
+    width: 22px;
+    height: 22px;
+}
+
+.weather__deck .description .now .like.active {
+    background: url('../img/heart-ico.svg')
 }
 
 .weather__deck .description .forecast img {
