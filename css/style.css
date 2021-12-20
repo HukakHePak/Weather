@@ -516,6 +516,8 @@ body {
 }
 
 .weather__deck .description .now img {
+    width: 100px;
+    filter: drop-shadow( 0 0 2px rgb(0, 0, 0));
     margin: auto;
 }
 
@@ -538,7 +540,7 @@ body {
 
 .weather__deck .description .forecast img {
     margin: auto;
-    width: 50%;
+    width: 100%;
     object-fit:contain;
 }
 
@@ -602,6 +604,7 @@ body {
 .weather__deck .favourite .city span {
     word-wrap: break-word;
     max-width: 230px;
+    cursor: pointer;
 }
 
 .weather__deck .favourite .city img{

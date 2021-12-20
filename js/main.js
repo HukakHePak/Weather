@@ -1,4 +1,8 @@
-const SERVER_URL = 'http://api.openweathermap.org/data/2.5/weather';
+const URL = {
+    WEATHER: 'http://api.openweathermap.org/data/2.5/weather',
+    ICON:  'http://openweathermap.org/img/wn'
+}
+
 const API_KEY = 'f660a2fb1e4bad108d6160b7f58c555f';
 
 import {UI} from './view.js'
@@ -10,12 +14,17 @@ const WEATHER_STORAGE_KEY = {
 }
 
 function requestWeather(cityName) {
-    fetch(`${SERVER_URL}?q=${cityName}&appid=${API_KEY}`)
-    .then(response => response.text())
-    .then(response => {
-        localStorage.setItem(WEATHER_STORAGE_KEY.BUFFER, response);
-        updateTabs();
-    });
+    if(cityName) {
+        fetch(`${URL.WEATHER}?q=${cityName}&appid=${API_KEY}`)
+        .then(response => response.text())
+        .then(response => { 
+            if(JSON.parse(response).cod != '404') 
+            {
+                localStorage.setItem(WEATHER_STORAGE_KEY.BUFFER, response);
+                updateTabs();
+            }           
+        })
+    }   
 }
 
 function isCollected(cityName) {
@@ -29,20 +38,23 @@ function updateTabs() {
     const weather = JSON.parse(localStorage.getItem(WEATHER_STORAGE_KEY.BUFFER));
     const NOW = UI.WEATHER.DISPLAY.VALUES.NOW;
     const DETAILS = UI.WEATHER.DISPLAY.VALUES.DETAILS;
-    {
-        
-        NOW[0];
-    }
+
     NOW[1].textContent = DETAILS[1].textContent = Math.round(weather.main.temp - 273);
     NOW[2].textContent = DETAILS[0].textContent = weather.name;
+
     if(isCollected(weather.name)) NOW[3].classList.add('active');
     else NOW[3].classList.remove('active');
+
     DETAILS[2].textContent = Math.round(weather.main.feels_like - 273);
     DETAILS[3].textContent = weather.weather[0].main;
+
     let sunrise = new Date(weather.sys.sunrise * 1000);
     DETAILS[4].textContent = sunrise.getHours() + ':' + sunrise.getMinutes();
     let sunset = new Date(weather.sys.sunset * 1000);
     DETAILS[5].textContent = sunset.getHours() + ':' + sunset.getMinutes();
+
+    const icon = weather.weather[0].icon.slice(0, 2);
+    NOW[0].src = `${URL.ICON}/${icon}n@2x.png`;
 };
 
 function updateFavors() {
@@ -61,13 +73,13 @@ function updateFavors() {
         });
         newFavorite.lastElementChild.addEventListener('click', (event) => {
             const parent = event.target.parentElement;
+            let collection = localStorage.getItem(WEATHER_STORAGE_KEY.COLLECTION);
+            collection = collection ? collection.split(', ') : [];
             const newCollection = collection.filter(item => item != parent.firstElementChild.textContent).join(', ');
             localStorage.setItem(WEATHER_STORAGE_KEY.COLLECTION, newCollection);
             parent.remove();
             UI.WEATHER.DISPLAY.VALUES.NOW[3].classList.remove('active');
-        });
-
-        
+        }); 
         UI.WEATHER.FAVORITE.LIST.prepend(newFavorite); 
     })
 }
@@ -81,6 +93,7 @@ UI.WEATHER.DISPLAY.BUTTONS.forEach((node, index) => {
         });
         node.classList.add('active');
         tabs[index].classList.add('active');
+        if(index == 2) UI.WEATHER.AUDIO.play();
     });
 });
 
@@ -107,5 +120,3 @@ UI.WEATHER.FAVORITE.LIKE.addEventListener('click', (event) => {
 
 updateTabs();
 updateFavors();
-
-//localStorage.clear();
