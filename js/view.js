@@ -18,9 +18,9 @@ export const UI = {
             BUTTONS: WEATHER_BLOCK.querySelectorAll('.presents .selects button'),
         },
         FAVORITE: {
-            BUTTON: WEATHER_TABS[0].querySelector('.like'),
+            LIKE: WEATHER_TABS[0].querySelector('.like'),
             LIST: WEATHER_BLOCK.querySelector('.favourite .locations'),
-            TEMPLATE: WEATHER_BLOCK.querySelector('.favourite .locations li'),
+            TEMPLATE: WEATHER_BLOCK.querySelector('.favourite .locations .city'),
         }
     }
 };
