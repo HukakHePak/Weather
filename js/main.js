@@ -39,8 +39,10 @@ function updateTabs() {
     else NOW[3].classList.remove('active');
     DETAILS[2].textContent = Math.round(weather.main.feels_like - 273);
     DETAILS[3].textContent = weather.weather[0].main;
-    DETAILS[4].textContent = weather.sys.sunrise;
-    DETAILS[5].textContent = weather.sys.sunset;
+    let sunrise = new Date(weather.sys.sunrise * 1000);
+    DETAILS[4].textContent = sunrise.getHours() + ':' + sunrise.getMinutes();
+    let sunset = new Date(weather.sys.sunset * 1000);
+    DETAILS[5].textContent = sunset.getHours() + ':' + sunset.getMinutes();
 };
 
 function updateFavors() {
@@ -52,7 +54,20 @@ function updateFavors() {
 
     collection.forEach(city => {
         const newFavorite = UI.WEATHER.FAVORITE.TEMPLATE.cloneNode(true);  
-        newFavorite.textContent = city;
+        newFavorite.firstElementChild.textContent = city;
+        newFavorite.firstElementChild.addEventListener('click', (event) => {
+            requestWeather(event.target.textContent);
+            updateTabs();
+        });
+        newFavorite.lastElementChild.addEventListener('click', (event) => {
+            const parent = event.target.parentElement;
+            const newCollection = collection.filter(item => item != parent.firstElementChild.textContent).join(', ');
+            localStorage.setItem(WEATHER_STORAGE_KEY.COLLECTION, newCollection);
+            parent.remove();
+            UI.WEATHER.DISPLAY.VALUES.NOW[3].classList.remove('active');
+        });
+
+        
         UI.WEATHER.FAVORITE.LIST.prepend(newFavorite); 
     })
 }
@@ -92,3 +107,5 @@ UI.WEATHER.FAVORITE.LIKE.addEventListener('click', (event) => {
 
 updateTabs();
 updateFavors();
+
+//localStorage.clear();

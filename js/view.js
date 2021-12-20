@@ -20,9 +20,7 @@ export const UI = {
         FAVORITE: {
             LIKE: WEATHER_TABS[0].querySelector('.like'),
             LIST: WEATHER_BLOCK.querySelector('.favourite .locations'),
-            TEMPLATE: WEATHER_BLOCK.querySelector('.favourite .locations .city'),
+            TEMPLATE: WEATHER_BLOCK.querySelector('.favourite .locations .city').cloneNode(true),
         }
     }
 };
-
-UI.WEATHER.FAVORITE.TEMPLATE.remove();

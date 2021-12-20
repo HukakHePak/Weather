@@ -585,21 +585,29 @@ body {
 .weather__deck .favourite ul, .weather__deck .details ul {
     position: relative;
     box-sizing: border-box;
-    padding-top: 35px;
-    padding-left: 18px;
+    padding: 35px 18px;
     font-size: 24px;
 }
 
-.weather__deck .favourite li, .weather__deck .details .city{
+.weather__deck .favourite .city, .weather__deck .details li{
+    display: flex;
+    justify-content: space-between;
     margin-bottom: 10px;
 }
 
-.weather__deck .favourite li:last-child, .weather__deck .details .city:last-child {
+.weather__deck .favourite .city:last-child, .weather__deck .details li:last-child {
     margin: 0;
 }
 
-.weather__deck .favourite li, .weather__deck .details .city button {
-    
+.weather__deck .favourite .city span {
+    word-wrap: break-word;
+    max-width: 230px;
+}
+
+.weather__deck .favourite .city img{
+    align-self: flex-start;
+    width: 21px;
+    margin-top: 4px;
 }
 
 /*----------------------------------------------------------------
