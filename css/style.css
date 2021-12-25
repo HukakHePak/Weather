@@ -584,11 +584,12 @@ body {
 .weather__deck .favourite .locations, .weather__deck .details > ul, .weather__deck .forecast .details {
     width: 100%;
     box-sizing: border-box;
-    padding: 35px 18px;
+    padding: 35px 10px;
     font-size: 24px;
-    height: 280px;
+    height: 270px;
     overflow: scroll;
     align-self: flex-end;
+    margin-bottom: 10px;
 }
 
 .weather__deck .details > ul {
@@ -596,7 +597,9 @@ body {
 }
 
 .weather__deck .favourite .locations {
-    height: 320px;
+    height: 300px;
+    width : 100%;
+    padding: 0px 10px;
 }
 
 .weather__deck .favourite .city, .weather__deck .details li, .weather__deck .forecast .details > li {
@@ -637,8 +640,6 @@ body {
     justify-content: space-between;
 }
 
-
-
 .weather__deck .forecast .stats ul {
     margin-bottom: 0;
     align-self: center;
@@ -659,7 +660,7 @@ body {
 }
 
 ::-webkit-scrollbar {
-    visibility: hidden;
+    display: none;
 }
 /*----------------------------------------------------------------
     WEATHER CSS FINISH
