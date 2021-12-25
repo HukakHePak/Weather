@@ -22,6 +22,5 @@ export const UI = {
             LIST: WEATHER_BLOCK.querySelector('.favourite .locations'),
             TEMPLATE: WEATHER_BLOCK.querySelector('.favourite .locations .city').cloneNode(true),
         },
-        AUDIO: WEATHER_BLOCK.querySelector('.weather__deck audio '),
     }
 };

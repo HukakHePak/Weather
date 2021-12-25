@@ -12,34 +12,52 @@
         <div id="weather" class="weather__frame">
             <div class="weather__deck">
                 <form class="search">
-                    <input name="city" type="text" value="" placeholder="City">
+                    <input name="city" type="text" value="" placeholder="Write city">
                     <button name="submit"></button>
                 </form>
 
                 <div class="result">
                     <div class="presents border">
                         <div class="description border">
-                            <figure class="now active">
-                                <img src="./img/cloud-ico.svg" alt="current weather image" class="value">
+                            <div class="now active">
+                                <img src="./img/cloud-ico.svg" alt="clouds" class="value">
                                 <div class="temperature"><span class="value">0</span>°</div>
-                                <span class="city value">city</span>
+                                <span class="city value">City</span>
                                 <button class="like value"></button>
-                            </figure>
+                            </div>
 
                             <div class="details ">
-                                <span class="value">city</span>
+                                <span class="value">City</span>
                                 <ul class="stats">
-                                    <li>Temperature: <span><span class="value">0</span> °</span></li>
-                                    <li>Feels like: <span><span class="value">0</span> °</span></li>
-                                    <li>Weather: <span class="value">weather</span></li>
+                                    <li>Temperature: <span><span class="value">0</span>°</span></li>
+                                    <li>Feels like: <span><span class="value">0</span>°</span></li>
+                                    <li>Weather: <span class="value">Weather</span></li>
                                     <li>Sunrise: <span class="value">00:00</span></li>
                                     <li>Sunset: <span class="value">00:00</span></li>
                                 </ul>
                             </div>
 
-                            <figure class="forecast ">
-                                <img src="./img/to-be.jpg" alt="">
-                            </figure>                      
+                            <div class="forecast ">
+                                <span class="value">City</span>
+                                <ul class="details">
+                                    <li>
+                                        <div class="date">
+                                            <span class="value">1 January</span>
+                                            <span class="value">00:00</span>
+                                        </div>
+                                        <div class="stats">
+                                            <ul>
+                                                <li>Temperature: <span><span class="value">0</span> °</span></li>
+                                                <li>Feels like: <span><span class="value">0</span> °</span></li>
+                                            </ul>
+                                            <figure>
+                                                <figcaption class="value">Weather</figcaption>
+                                                <img src="./img/cloud-ico.svg" alt="clouds" class="value">
+                                            </figure>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>                      
                         </div>
 
                         <nav class="selects">
@@ -53,13 +71,12 @@
                         <span class="border">Added Locations:</span>    
                         <ul class="locations">
                             <li class="city">
-                                <span></span>
+                                <span>City</span>
                                 <img src="./img/close-icon.svg" alt="">
-                            </li>                                          
+                            </li>                                                                                                                                                   
                         </ul>                               
                     </div> 
                 </div>
-                <audio preload src="./sound/Jojo's Bizarre Adventure — To be Continued (www.lightaudio.ru).mp3"></audio>         
             </div>
         </div>  
     </div> 

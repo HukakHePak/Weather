@@ -1,6 +1,6 @@
 const URL = {
-    WEATHER: 'http://api.openweathermap.org/data/2.5/weather',
-    ICON:  'http://openweathermap.org/img/wn'
+    WEATHER: 'https://api.openweathermap.org/data/2.5/weather',
+    ICON:  'https://openweathermap.org/img/wn'
 }
 
 const API_KEY = 'f660a2fb1e4bad108d6160b7f58c555f';
@@ -10,7 +10,7 @@ import {UI} from './view.js'
 const WEATHER_STORAGE_KEY = {
     COLLECTION: 'weather_favorite_collection',
     BUFFER:'weather_buffer',
-    TAB: 'weather_opened_tab'
+    LASTAB: 'weather_opened_tab'
 }
 
 function requestWeather(cityName) {
@@ -67,10 +67,7 @@ function updateFavors() {
     collection.forEach(city => {
         const newFavorite = UI.WEATHER.FAVORITE.TEMPLATE.cloneNode(true);  
         newFavorite.firstElementChild.textContent = city;
-        newFavorite.firstElementChild.addEventListener('click', (event) => {
-            requestWeather(event.target.textContent);
-            updateTabs();
-        });
+        newFavorite.firstElementChild.addEventListener('click', event => requestWeather(event.target.textContent));
         newFavorite.lastElementChild.addEventListener('click', (event) => {
             const parent = event.target.parentElement;
             let collection = localStorage.getItem(WEATHER_STORAGE_KEY.COLLECTION);
@@ -93,7 +90,7 @@ UI.WEATHER.DISPLAY.BUTTONS.forEach((node, index) => {
         });
         node.classList.add('active');
         tabs[index].classList.add('active');
-        if(index == 2) UI.WEATHER.AUDIO.play();
+        localStorage.setItem(WEATHER_STORAGE_KEY.LASTAB, index);
     });
 });
 
@@ -118,5 +115,15 @@ UI.WEATHER.FAVORITE.LIKE.addEventListener('click', (event) => {
     }
 });
 
-updateTabs();
+//localStorage.removeItem(WEATHER_STORAGE_KEY.BUFFER);
+
+if(!JSON.parse(localStorage.getItem(WEATHER_STORAGE_KEY.BUFFER))) 
+    requestWeather("City");
+else updateTabs();
+
 updateFavors();
+//localStorage.removeItem(WEATHER_STORAGE_KEY.LASTAB);
+
+const activeTab = localStorage.getItem(WEATHER_STORAGE_KEY.LASTAB);
+if(activeTab != undefined) UI.WEATHER.DISPLAY.BUTTONS[activeTab].click();
+else UI.WEATHER.DISPLAY.BUTTONS[0].click()
