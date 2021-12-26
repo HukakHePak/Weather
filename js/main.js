@@ -1,28 +1,40 @@
 import { UI } from './view.js'
 import { WEATHER_STORAGE } from './storage.js';
 
-const URL = {
-    WEATHER: 'https://api.openweathermap.org/data/2.5/weather',
-    ICON:  'https://openweathermap.org/img/wn',
+const WEATHER_URL = {
+    CURRENT: 'https://api.openweathermap.org/data/2.5/weather',
+    FORECAST: 'https://api.openweathermap.org/data/2.5/forecast',
+    ICON: 'https://openweathermap.org/img/wn',
     API_KEY: 'f660a2fb1e4bad108d6160b7f58c555f',
 }
 
-function requestWeather(cityName) {
-    if(cityName) {
-        fetch(`${URL.WEATHER}?q=${cityName}&appid=${URL.API_KEY}`)
+function requestURL(cityName, url, callback) {
+    if(!cityName)  return;
+    fetch(`${url}?q=${cityName}&appid=${WEATHER_URL.API_KEY}`)
         .then( response => response.text() )
         .then( response => { 
             if(JSON.parse(response).cod == '404') {
                 throw new Error();
-            }
-
-            WEATHER_STORAGE.LAST.WEATHER.set(response);
-            updateTABS();         
+            }   
+            callback(response);             
         })
+        .then (updateDisplay) /////////// remake this 
         .catch( () => {
             alert('not found');
-        });
-    }   
+        }); 
+        
+}
+
+function getWeather(cityName) {
+    requestURL(cityName, WEATHER_URL.CURRENT, response => {
+        WEATHER_STORAGE.LAST.WEATHER.set(response);      
+    });
+
+    requestURL(cityName, WEATHER_URL.FORECAST, response => {
+        WEATHER_STORAGE.LAST.FORECAST.set(response); 
+    })
+    
+    ///////// add await for updater
 }
 
 function toCelcius(temperature) {
@@ -34,120 +46,90 @@ function toTimeHM(time) {
     return date.getHours() + ':' + date.getMinutes();
 }
 
-function updateTABS() {
+function updateDisplay() {
     const WEATHER = WEATHER_STORAGE.LAST.WEATHER.get();
+    const FORECAST = WEATHER_STORAGE.LAST.FORECAST.get();
 
-    const NOW_TAB = UI.WEATHER.DISPLAY.VALUES.NOW;
-    const DETAILS_TAB = UI.WEATHER.DISPLAY.VALUES.DETAILS;
-    const FORECAST_TAB = UI.WEATHER.DISPLAY.VALUES.FORECAST;
+    
 
-    const TEMPERATURE = toCelcius(WEATHER.main.temp);
-    const CITY = WEATHER.name;
-    const ICON_NAME = WEATHER.weather[0].icon.slice(0, 2);
-
-    NOW_TAB[0].src = `${URL.ICON}/${ICON_NAME}n@2x.png`;
-    NOW_TAB[1].textContent = TEMPERATURE; 
-    NOW_TAB[2].textContent = CITY;
-
-    if(WEATHER_STORAGE.CITIES.includes(WEATHER.name)) {
-        NOW_TAB[3].classList.add('active');
-    } else {
-        NOW_TAB[3].classList.remove('active');
+    const weather = {
+        city: WEATHER.name,
+        temp: toCelcius(WEATHER.main.temp),
+        feels: toCelcius(WEATHER.main.feels_like),
+        main: WEATHER.weather[0].main,
+        icon: `${WEATHER_URL.ICON}/${WEATHER.weather[0].icon.slice(0, 2)}n@2x.png`,
+        sunrise: toTimeHM(WEATHER.sys.sunrise),
+        sunset: toTimeHM(WEATHER.sys.sunset),
+        forecast: undefined,
     }
 
-    DETAILS_TAB[0].textContent = CITY;
-    DETAILS_TAB[1].textContent = TEMPERATURE;
-    DETAILS_TAB[2].textContent = toCelcius(WEATHER.main.feels_like);
-    DETAILS_TAB[3].textContent = WEATHER.weather[0].main;
-    DETAILS_TAB[4].textContent = toTimeHM(WEATHER.sys.sunrise);
-    DETAILS_TAB[5].textContent = toTimeHM(WEATHER.sys.sunset);
-    
-    //FORECAST_TAB[0].
 
+
+    UI.WEATHER.DISPLAY.update(weather);
+
+    const FAVORITES = UI.WEATHER.FAVORITE;
+    
+    WEATHER_STORAGE.CITIES.includes(WEATHER.name) ? FAVORITES.like() : FAVORITES.dislike();
 };
 
-function updateFavors() {
-    const FAVORITES_NODE = UI.WEATHER.FAVORITE.LIST;
+{
+    const DISPLAY = UI.WEATHER.DISPLAY;
 
-    while(FAVORITES_NODE.children.length) {
-        FAVORITES_NODE.children[0].remove();
-    }
+    DISPLAY.BUTTONS.forEach( (button, index) => {
+        button.addEventListener('click', () => {
+            DISPLAY.clear();
+            DISPLAY.select(index);
+            WEATHER_STORAGE.LAST.TAB.set(index);
+        });});
+}
 
-    WEATHER_STORAGE.CITIES.get().forEach( cityName => {
-        const NEW_FAVORITE = UI.WEATHER.FAVORITE.TEMPLATE.cloneNode(true);     
-        NEW_FAVORITE.firstElementChild.textContent = cityName;
-        NEW_FAVORITE.firstElementChild.addEventListener('click', event => {
-            requestWeather(event.target.textContent);
-        });
+{
+    const ACTIVE_TAB = WEATHER_STORAGE.LAST.TAB.get();
 
-        NEW_FAVORITE.lastElementChild.addEventListener('click', event => {
-            const PARENT_NODE = event.target.parentElement;
-            WEATHER_STORAGE.CITIES.remove(PARENT_NODE.firstElementChild.textContent);
+    if(ACTIVE_TAB) {
+        UI.WEATHER.DISPLAY.BUTTONS[ACTIVE_TAB].click();
+    } 
+}
 
-            PARENT_NODE.remove();
-            UI.WEATHER.FAVORITE.LIKE.classList.remove('active');
-        });
-
-        FAVORITES_NODE.prepend(NEW_FAVORITE); 
+{
+    const SEARCH = UI.WEATHER.SEARCH;
+    
+    SEARCH.FORM.addEventListener('submit', event => {  
+        getWeather( SEARCH.getCity() );
+        SEARCH.FORM.reset(); 
+        event.preventDefault(); 
     });
 }
 
-UI.WEATHER.DISPLAY.BUTTONS.forEach( (node, index) => {
-    node.addEventListener('click', () => {
-        const TABS = UI.WEATHER.DISPLAY.TABS;
+{
+    const FAVORITES = UI.WEATHER.FAVORITE;
 
-        UI.WEATHER.DISPLAY.BUTTONS.forEach( (node, index) => {
-            node.classList.remove('active');
-            TABS[index].classList.remove('active');
-        });
+    FAVORITES.LIKE.addEventListener('click', () => {
+        const STORAGE = WEATHER_STORAGE.CITIES;
+        const CITY = WEATHER_STORAGE.LAST.WEATHER.get().name;
 
-        node.classList.add('active');
-        TABS[index].classList.add('active');
+        if(!CITY) return;  
 
-        WEATHER_STORAGE.LAST.TAB.set(index);
-    });
-});
-
-UI.WEATHER.SEARCH.FORM.addEventListener('submit', event => {
-    requestWeather(UI.WEATHER.SEARCH.CITY.value);
-
-    event.preventDefault();
-    event.target.reset();
-});
-
-UI.WEATHER.FAVORITE.LIKE.addEventListener('click', event => {
-    const STORAGE = WEATHER_STORAGE.CITIES;
-    const CITY = WEATHER_STORAGE.LAST.WEATHER.get().name;
-
-    if(CITY) {
-        event.target.classList.toggle('active');
-        
         if(STORAGE.includes(CITY)) {
             STORAGE.remove(CITY);
-        } else {
-            STORAGE.add(CITY);
+            FAVORITES.remove(CITY);
+            FAVORITES.dislike();
+            return;      
         } 
 
-        updateFavors();
-    }
-});
-
-//localStorage.removeItem(WEATHER_STORAGE_KEY.BUFFER);
-
-if(WEATHER_STORAGE.LAST.WEATHER.get() == {}) {
-    requestWeather("City");
-} else {
-    updateTABS();
+        STORAGE.add(CITY);
+        FAVORITES.add(CITY, getWeather, STORAGE.remove);
+        FAVORITES.like();    
+    });
 }
 
-updateFavors();
-//localStorage.removeItem(WEATHER_STORAGE_KEY.LASTAB);
+if(WEATHER_STORAGE.LAST.WEATHER.get() == {}) {
+    getWeather("City");
+ }
 
-const ACTIVE_TAB = WEATHER_STORAGE.LAST.TAB.get();
+updateDisplay();
 
-if(ACTIVE_TAB) {
-    UI.WEATHER.DISPLAY.BUTTONS[ACTIVE_TAB].click();
-} 
+UI.WEATHER.FAVORITE.update(WEATHER_STORAGE.CITIES.get(), getWeather, WEATHER_STORAGE.CITIES.remove);
 
 /*  TODO:
 remake: 

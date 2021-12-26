@@ -1,6 +1,7 @@
 const WEATHER_STORAGE_KEY = {
     COLLECTION: 'weather_favorite_collection',
     BUFFER:'weather_buffer',
+    FORECAST: 'weather_forecast',
     LASTAB: 'weather_opened_tab'
 }
 
@@ -9,20 +10,20 @@ export const WEATHER_STORAGE = {
         get() {
             return localStorage.getItem(WEATHER_STORAGE_KEY.COLLECTION).split(', ');
         },
-        set(array) { 
-            localStorage.setItem(WEATHER_STORAGE_KEY.COLLECTION, array.join(', '));
+        set(arr) { 
+            localStorage.setItem(WEATHER_STORAGE_KEY.COLLECTION, arr.join(', '));
         },
-        add(string) {
+        add(str) {
             let COLLECTION = this.get();
-            COLLECTION.push(string);
+            COLLECTION.push(str);
 
             this.set(COLLECTION);
         },
-        remove(string) {
-            this.set(this.get().filter( item => item != string ));
+        remove(str) {
+            this.set(this.get().filter( item => item != str ));
         },
-        includes(string) {     
-            return this.get().indexOf(string) + 1;
+        includes(str) {     
+            return this.get().indexOf(str) + 1;
         },
         
     },
@@ -39,8 +40,16 @@ export const WEATHER_STORAGE = {
             get() {
                 return JSON.parse(localStorage.getItem(WEATHER_STORAGE_KEY.BUFFER));
             },
-            set(object) {
-                JSON.stringify(localStorage.setItem(WEATHER_STORAGE_KEY.BUFFER, object));
+            set(obj) {
+                JSON.stringify(localStorage.setItem(WEATHER_STORAGE_KEY.BUFFER, obj));
+            }
+        },
+        FORECAST: {
+            get() {
+                return JSON.parse(localStorage.getItem(WEATHER_STORAGE_KEY.FORECAST));
+            },
+            set(obj) {
+                JSON.stringify(localStorage.setItem(WEATHER_STORAGE_KEY.FORECAST, obj));
             }
         }
     }
@@ -56,4 +65,8 @@ if(WEATHER_STORAGE.LAST.TAB.get() === undefined) {
 
 if(WEATHER_STORAGE.LAST.WEATHER.get() === undefined) {
     WEATHER_STORAGE.CITIES.WEATHER.set() = {};
+}
+
+if(WEATHER_STORAGE.LAST.FORECAST.get() === undefined) {
+    WEATHER_STORAGE.CITIES.FORECAST.set() = {};
 }
