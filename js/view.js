@@ -10,7 +10,8 @@ const WEATHER_TEMPLATE = WEATHER_BLOCK.querySelector('.favourite .locations .cit
 
 const NOW = WEATHER_TABS[0].querySelectorAll('.value');
 const DETAILS = WEATHER_TABS[1].querySelectorAll('.value');
-const FORECAST = WEATHER_TABS[2].querySelectorAll('.value');
+const FORECAST = WEATHER_TABS[2];
+const FORECAST_TEMPLATE = WEATHER_TABS[2].querySelector('.details li');
 
 const WEATHER_LIST = WEATHER_BLOCK.querySelector('.favourite .locations');
 
@@ -37,7 +38,9 @@ export const UI = {
                 WEATHER_TABS[index].classList.add('active');
                 WEATHER_BUTTONS[index].classList.add('active');
             },
-            update(weather) {
+            update(weather, forecast) {
+                weather.like ? UI.WEATHER.FAVORITE.like() : UI.WEATHER.FAVORITE.dislike();
+
                 NOW[0].src = weather.icon;
                 NOW[1].textContent = DETAILS[1].textContent = weather.temp;
                 NOW[2].textContent = DETAILS[0].textContent = weather.city;
@@ -45,6 +48,33 @@ export const UI = {
                 DETAILS[3].textContent = weather.main;
                 DETAILS[4].textContent = weather.sunrise;
                 DETAILS[5].textContent = weather.sunset;
+
+                FORECAST.children[0].textContent = weather.city;
+                
+                this.clearForecast()
+                this.fillForecast(forecast);
+            },
+            fillForecast(list) {
+                list.forEach( item => {
+                    const NODE = FORECAST_TEMPLATE.cloneNode(true);
+                    const FIELDS = NODE.querySelectorAll('.value');
+                    
+                    FIELDS[0].textContent = item.date;
+                    FIELDS[1].textContent = item.time;
+                    FIELDS[2].textContent = item.temp;
+                    FIELDS[3].textContent = item.feels;
+                    FIELDS[4].textContent = item.main;
+                    FIELDS[5].src = item.icon;
+
+                    FORECAST.lastElementChild.append(NODE);
+                })
+            },
+            clearForecast() {
+                const collection = FORECAST.lastElementChild.children;
+
+                while(collection.length) {
+                    collection[0].remove();
+                }
             }
         },
         FAVORITE: {

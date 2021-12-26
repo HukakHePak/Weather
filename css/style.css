@@ -584,9 +584,9 @@ body {
 .weather__deck .favourite .locations, .weather__deck .details > ul, .weather__deck .forecast .details {
     width: 100%;
     box-sizing: border-box;
-    padding: 35px 10px;
+    padding: 25px 10px;
     font-size: 24px;
-    height: 270px;
+    height: 260px;
     overflow: scroll;
     align-self: flex-end;
     margin-bottom: 10px;
@@ -599,7 +599,7 @@ body {
 .weather__deck .favourite .locations {
     height: 300px;
     width : 100%;
-    padding: 0px 10px;
+
 }
 
 .weather__deck .favourite .city, .weather__deck .details li, .weather__deck .forecast .details > li {
@@ -638,6 +638,11 @@ body {
 .weather__deck .forecast .date, .weather__deck .forecast .stats  {
     display: flex;
     justify-content: space-between;
+}
+
+.weather__deck .forecast .details{
+    display: flex;
+    flex-direction: column;
 }
 
 .weather__deck .forecast .stats ul {

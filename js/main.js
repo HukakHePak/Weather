@@ -8,33 +8,29 @@ const WEATHER_URL = {
     API_KEY: 'f660a2fb1e4bad108d6160b7f58c555f',
 }
 
-function requestURL(cityName, url, callback) {
-    if(!cityName)  return;
-    fetch(`${url}?q=${cityName}&appid=${WEATHER_URL.API_KEY}`)
-        .then( response => response.text() )
-        .then( response => { 
-            if(JSON.parse(response).cod == '404') {
-                throw new Error();
-            }   
-            callback(response);             
-        })
-        .then (updateDisplay) /////////// remake this 
-        .catch( () => {
-            alert('not found');
-        }); 
-        
+async function requestURL(cityName, url) {
+    const RESPONSE = await fetch(`${url}?q=${cityName}&appid=${WEATHER_URL.API_KEY}`);
+
+    if(RESPONSE.json().cod == '404') {
+        throw new Error();
+    } 
+
+    return await RESPONSE.text();        
 }
 
-function getWeather(cityName) {
-    requestURL(cityName, WEATHER_URL.CURRENT, response => {
-        WEATHER_STORAGE.LAST.WEATHER.set(response);      
-    });
+async function getWeather(cityName) {
+    if(!cityName)  {
+        return;
+    }
 
-    requestURL(cityName, WEATHER_URL.FORECAST, response => {
-        WEATHER_STORAGE.LAST.FORECAST.set(response); 
-    })
+    try {
+        WEATHER_STORAGE.LAST.WEATHER.set(await requestURL(cityName, WEATHER_URL.CURRENT));
+
+        WEATHER_STORAGE.LAST.FORECAST.set(await requestURL(cityName, WEATHER_URL.FORECAST));
+    } catch { 
+        alert('not found');
+    } 
     
-    ///////// add await for updater
 }
 
 function toCelcius(temperature) {
@@ -42,34 +38,42 @@ function toCelcius(temperature) {
 }
 
 function toTimeHM(time) {
-    const date = new Date(time * 1000);
-    return date.getHours() + ':' + date.getMinutes();
+    const DATE = new Date(time * 1000);
+    return DATE.getHours() + ':' + DATE.getMinutes();
+}
+
+function toDateDM(time) {
+    if(!time) return;
+
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 
+    'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    return time.slice(8, 10) + ' ' + MONTHS[time.slice(5, 7) - 1];
+}
+
+function toWeatherObj(obj) {
+    return {
+        date: toDateDM(obj.dt_txt),
+        time: obj.dt_txt ? obj.dt_txt.slice(-8, -3) : undefined,
+        temp: toCelcius(obj.main.temp),
+        feels:  toCelcius(obj.main.feels_like),
+        main: obj.weather[0].main,
+        icon:  `${WEATHER_URL.ICON}/${obj.weather[0].icon.slice(0, 2)}n@2x.png`,
+        like: WEATHER_STORAGE.CITIES.includes(obj.name),
+        city: obj.name,
+        sunrise: toTimeHM(obj.sys.sunrise),
+        sunset: toTimeHM(obj.sys.sunset),
+    };
 }
 
 function updateDisplay() {
-    const WEATHER = WEATHER_STORAGE.LAST.WEATHER.get();
-    const FORECAST = WEATHER_STORAGE.LAST.FORECAST.get();
+    const LIST = [];
 
-    
+    Array.from(WEATHER_STORAGE.LAST.FORECAST.get().list).forEach( item => {
+        LIST.push( toWeatherObj(item) );
+    });
 
-    const weather = {
-        city: WEATHER.name,
-        temp: toCelcius(WEATHER.main.temp),
-        feels: toCelcius(WEATHER.main.feels_like),
-        main: WEATHER.weather[0].main,
-        icon: `${WEATHER_URL.ICON}/${WEATHER.weather[0].icon.slice(0, 2)}n@2x.png`,
-        sunrise: toTimeHM(WEATHER.sys.sunrise),
-        sunset: toTimeHM(WEATHER.sys.sunset),
-        forecast: undefined,
-    }
-
-
-
-    UI.WEATHER.DISPLAY.update(weather);
-
-    const FAVORITES = UI.WEATHER.FAVORITE;
-    
-    WEATHER_STORAGE.CITIES.includes(WEATHER.name) ? FAVORITES.like() : FAVORITES.dislike();
+    UI.WEATHER.DISPLAY.update(toWeatherObj(WEATHER_STORAGE.LAST.WEATHER.get()), LIST);  
 };
 
 {
@@ -135,10 +139,10 @@ UI.WEATHER.FAVORITE.update(WEATHER_STORAGE.CITIES.get(), getWeather, WEATHER_STO
 remake: 
     localstorage using ------------ done
     fetch catch (add small window with notification under search)
-    modules
+    modules ----------------- done
 
 add: 
-    forecast filler
+    forecast filler ----------------- done
     hovers and clickers
 
 optimize:
