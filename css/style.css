@@ -662,11 +662,13 @@ body {
 .weather__deck .forecast figure img {
     width: 31px;
     height: 31px;
+    filter: drop-shadow( 0 0 1px rgb(0, 0, 0));
 }
 
 ::-webkit-scrollbar {
     display: none;
 }
+
 /*----------------------------------------------------------------
     WEATHER CSS FINISH
 */

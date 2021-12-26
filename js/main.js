@@ -11,23 +11,28 @@ const WEATHER_URL = {
 async function requestURL(cityName, url) {
     const RESPONSE = await fetch(`${url}?q=${cityName}&appid=${WEATHER_URL.API_KEY}`);
 
-    if(RESPONSE.json().cod == '404') {
-        throw new Error();
+    const WEATHER = await RESPONSE.text()
+
+    if(JSON.parse(WEATHER).cod == '404') {
+        throw new Error(WEATHER);
     } 
 
-    return await RESPONSE.text();        
+    return WEATHER;        
 }
 
 async function getWeather(cityName) {
     if(!cityName)  {
         return;
     }
-
     try {
+
         WEATHER_STORAGE.LAST.WEATHER.set(await requestURL(cityName, WEATHER_URL.CURRENT));
 
-        WEATHER_STORAGE.LAST.FORECAST.set(await requestURL(cityName, WEATHER_URL.FORECAST));
-    } catch { 
+        WEATHER_STORAGE.LAST.FORECAST.set((await requestURL(cityName, WEATHER_URL.FORECAST)));
+
+        updateDisplay();
+    } catch(error) { 
+        console.error(error);
         alert('not found');
     } 
     
@@ -69,11 +74,14 @@ function toWeatherObj(obj) {
 function updateDisplay() {
     const LIST = [];
 
-    Array.from(WEATHER_STORAGE.LAST.FORECAST.get().list).forEach( item => {
+    const FORECAST = WEATHER_STORAGE.LAST.FORECAST.get();
+    if(!FORECAST) return;
+
+    FORECAST.forEach( item => {
         LIST.push( toWeatherObj(item) );
     });
 
-    UI.WEATHER.DISPLAY.update(toWeatherObj(WEATHER_STORAGE.LAST.WEATHER.get()), LIST);  
+    UI.WEATHER.DISPLAY.update(toWeatherObj(WEATHER_STORAGE.LAST.WEATHER.get()), LIST);
 };
 
 {
@@ -127,13 +135,19 @@ function updateDisplay() {
     });
 }
 
-if(WEATHER_STORAGE.LAST.WEATHER.get() == {}) {
+
+//localStorage.clear();
+
+
+if(!WEATHER_STORAGE.LAST.WEATHER.get()) {
     getWeather("City");
- }
+} else {
+    updateDisplay();
+}
 
-updateDisplay();
-
-UI.WEATHER.FAVORITE.update(WEATHER_STORAGE.CITIES.get(), getWeather, WEATHER_STORAGE.CITIES.remove);
+UI.WEATHER.FAVORITE.update(WEATHER_STORAGE.CITIES.get(), getWeather, city => {
+    WEATHER_STORAGE.CITIES.remove(city);
+});
 
 /*  TODO:
 remake: 
@@ -146,7 +160,7 @@ add:
     hovers and clickers
 
 optimize:
-    updaters
+    updaters ------------- done
 
 
 

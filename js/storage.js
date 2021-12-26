@@ -1,3 +1,4 @@
+
 const WEATHER_STORAGE_KEY = {
     COLLECTION: 'weather_favorite_collection',
     BUFFER:'weather_buffer',
@@ -8,9 +9,11 @@ const WEATHER_STORAGE_KEY = {
 export const WEATHER_STORAGE = {
     CITIES: {
         get() {
-            return localStorage.getItem(WEATHER_STORAGE_KEY.COLLECTION).split(', ');
+            const VALUE = localStorage.getItem(WEATHER_STORAGE_KEY.COLLECTION);
+            return VALUE ? VALUE.split(', ') : [];
         },
         set(arr) { 
+            if(!arr) return;
             localStorage.setItem(WEATHER_STORAGE_KEY.COLLECTION, arr.join(', '));
         },
         add(str) {
@@ -20,12 +23,16 @@ export const WEATHER_STORAGE = {
             this.set(COLLECTION);
         },
         remove(str) {
-            this.set(this.get().filter( item => item != str ));
+            const VALUE = this.get();
+
+            if(!VALUE) return;
+            if(!str) return;   
+
+            this.set(VALUE.filter( item => item != str ));
         },
-        includes(str) {     
+        includes(str) {
             return this.get().indexOf(str) + 1;
         },
-        
     },
     LAST: {
         TAB: {
@@ -38,35 +45,24 @@ export const WEATHER_STORAGE = {
         },
         WEATHER: {
             get() {
-                return JSON.parse(localStorage.getItem(WEATHER_STORAGE_KEY.BUFFER));
+                const VALUE = localStorage.getItem(WEATHER_STORAGE_KEY.BUFFER);
+                return VALUE ? JSON.parse(VALUE) : {};
             },
             set(obj) {
-                JSON.stringify(localStorage.setItem(WEATHER_STORAGE_KEY.BUFFER, obj));
+                localStorage.setItem(WEATHER_STORAGE_KEY.BUFFER, obj);
             }
         },
         FORECAST: {
             get() {
-                return JSON.parse(localStorage.getItem(WEATHER_STORAGE_KEY.FORECAST));
+                let value = localStorage.getItem(WEATHER_STORAGE_KEY.FORECAST);
+
+                value = value ? JSON.parse(value).list : {};
+
+                return value ? Array.from(value) : [];
             },
             set(obj) {
-                JSON.stringify(localStorage.setItem(WEATHER_STORAGE_KEY.FORECAST, obj));
+                localStorage.setItem(WEATHER_STORAGE_KEY.FORECAST, obj);
             }
         }
     }
-}
-
-if(WEATHER_STORAGE.CITIES.get() === undefined) {
-    WEATHER_STORAGE.CITIES.set() = [];
-}
-
-if(WEATHER_STORAGE.LAST.TAB.get() === undefined) {
-    WEATHER_STORAGE.CITIES.TAB.set() = 0;
-}
-
-if(WEATHER_STORAGE.LAST.WEATHER.get() === undefined) {
-    WEATHER_STORAGE.CITIES.WEATHER.set() = {};
-}
-
-if(WEATHER_STORAGE.LAST.FORECAST.get() === undefined) {
-    WEATHER_STORAGE.CITIES.FORECAST.set() = {};
 }
