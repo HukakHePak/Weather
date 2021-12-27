@@ -17,7 +17,7 @@ const WEATHER = {
     NOW: MAIN.TABS[0].querySelectorAll('.value'),
     DETAILS: MAIN.TABS[1].querySelectorAll('.value'),
     FORECAST: MAIN.TABS[2].querySelectorAll('.value'),
-    FULLCAST: MAIN.WEATHER.querySelector('.full_forecast'),
+    FULLCAST: MAIN.WEATHER.querySelector('.forecast__full__container'),
 };
 
 export const UI = {
@@ -72,7 +72,7 @@ export const UI = {
                         FIELDS[3].textContent = item.feels;
                         FIELDS[4].textContent = item.main;
                         FIELDS[5].src = item.icon;
-    
+                        
                         MAIN.TABS[2].lastElementChild.append(NODE);
                     })
                 },
@@ -90,8 +90,9 @@ export const UI = {
                     LIST.classList.add('border');
 
                     LIST.addEventListener('mouseout', event => {
-                        LIST.remove();
-                        console.log(event.target);
+                        if(event.target == LIST && event.toElement.tagName != 'LI')
+                            LIST.remove();
+                        event.stopPropagation();
                     });
 
                     MAIN.WEATHER.firstElementChild.prepend(LIST);

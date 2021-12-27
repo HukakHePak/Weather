@@ -152,8 +152,9 @@ remake:
 add: 
     //forecast filler ----------------- done
     hovers and clickers
-    show full list on hover forecast
+    show full list on hover forecast ---------------- done
     shange cursor ------------- done
+    update last found city (form input. form submit)
 
 optimize:
     //updaters ------------- done
@@ -162,5 +163,4 @@ fix:
     empty errors
     remove favor like style -------------- done
     remove favor get storage ------------- done
-
 */
