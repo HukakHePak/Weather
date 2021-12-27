@@ -17,7 +17,7 @@ const WEATHER = {
     NOW: MAIN.TABS[0].querySelectorAll('.value'),
     DETAILS: MAIN.TABS[1].querySelectorAll('.value'),
     FORECAST: MAIN.TABS[2].querySelectorAll('.value'),
-    NOTIFICATION: MAIN.WEATHER.querySelector('.form__notificarion'),
+    NOTIFICATION: MAIN.WEATHER.querySelector('.form__notification'),
 };
 
 export const UI = {
