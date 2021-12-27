@@ -418,7 +418,7 @@ body {
     WEATHER CSS START
 */
 
-.weather__frame {
+.weather__frame {  
     box-sizing: unset;
     margin: auto;
     padding: 12px;
@@ -426,6 +426,7 @@ body {
 }
 
 .weather__deck {
+    position: relative;
     margin: auto;
     display: flex;
     flex-direction: column;
@@ -581,7 +582,7 @@ body {
     align-items: flex-end;
 }
 
-.weather__deck .favourite .locations, .weather__deck .details > ul, .weather__deck .forecast .details {
+.weather__deck .favourite .locations, .weather__deck .details > ul, .weather__deck .forecast .details, .weather__deck .full__forecast {
     width: 100%;
     box-sizing: border-box;
     padding: 25px 10px;
@@ -614,7 +615,10 @@ body {
 
 .weather__deck .favourite .city span {
     word-wrap: break-word;
-    max-width: 230px;
+    width: 230px;
+}
+
+.weather__deck .favourite .city{
     cursor: pointer;
 }
 
@@ -624,7 +628,7 @@ body {
     margin-top: 4px;
 }
 
-.weather__deck .forecast .details > li {
+.weather__deck .forecast .details > li, .weather__deck .full__forecast.details > li {
     width: 100%;
     height: 120px;
     margin-bottom: 9px;
@@ -635,34 +639,46 @@ body {
     flex-direction: column;
 }
 
-.weather__deck .forecast .date, .weather__deck .forecast .stats  {
+.weather__deck .forecast .date, .weather__deck .forecast .stats,
+.weather__deck .full__forecast .stats, .weather__deck .full__forecast .date  {
     display: flex;
     justify-content: space-between;
 }
 
-.weather__deck .forecast .details{
+.weather__deck .forecast .details {
     display: flex;
     flex-direction: column;
 }
 
-.weather__deck .forecast .stats ul {
+.weather__deck .forecast .stats ul, .weather__deck .full__forecast .stats ul {
     margin-bottom: 0;
     align-self: center;
 }
 
-.weather__deck .forecast .stats ul > li {
+.weather__deck .forecast .stats ul > li , .weather__deck .full__forecast .stats ul > li {
     margin: 0;
     display: inline-block;
 }
 
-.weather__deck .forecast figure {
+.weather__deck .forecast figure, .weather__deck .full__forecast figure {
     text-align: center;
 }
 
-.weather__deck .forecast figure img {
+.weather__deck .forecast figure img, .weather__deck .full__forecast figure img {
     width: 31px;
     height: 31px;
     filter: drop-shadow( 0 0 1px rgb(0, 0, 0));
+}
+
+.weather__deck .full__forecast {
+    display: flex;
+    position: absolute;
+    background-color: white;
+    height: 100%;
+    width: 50%;
+    z-index: 1;
+    left: 0; 
+    flex-direction: column;
 }
 
 ::-webkit-scrollbar {

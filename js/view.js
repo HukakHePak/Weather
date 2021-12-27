@@ -1,7 +1,7 @@
 
 const MAIN = {
     WEATHER: document.querySelector('#weather'),
-    TABS: document.querySelectorAll('#weather .presents .description > *'),
+    TABS: document.querySelectorAll('#weather .presents .description > *'),  
 }
 
 const WEATHER = {
@@ -17,6 +17,7 @@ const WEATHER = {
     NOW: MAIN.TABS[0].querySelectorAll('.value'),
     DETAILS: MAIN.TABS[1].querySelectorAll('.value'),
     FORECAST: MAIN.TABS[2].querySelectorAll('.value'),
+    FULLCAST: MAIN.WEATHER.querySelector('.full_forecast'),
 };
 
 export const UI = {
@@ -55,31 +56,47 @@ export const UI = {
 
                 MAIN.TABS[2].children[0].textContent = weather.city;
                 
-                this.clearForecast()
-                this.fillForecast(forecast);
+                UI.WEATHER.DISPLAY.FORECAST.clear()
+                UI.WEATHER.DISPLAY.FORECAST.fill(forecast);
             },
-            fillForecast(list) {
-                list.forEach( item => {
-                    const NODE = WEATHER.TEMPLATES.FORECAST.cloneNode(true);
-                    const FIELDS = NODE.querySelectorAll('.value');
-                    
-                    FIELDS[0].textContent = item.date;
-                    FIELDS[1].textContent = item.time;
-                    FIELDS[2].textContent = item.temp;
-                    FIELDS[3].textContent = item.feels;
-                    FIELDS[4].textContent = item.main;
-                    FIELDS[5].src = item.icon;
+            FORECAST: {
+                NODE: MAIN.TABS[2],
+                fill(list) {
+                    list.forEach( item => {
+                        const NODE = WEATHER.TEMPLATES.FORECAST.cloneNode(true);
+                        const FIELDS = NODE.querySelectorAll('.value');
+                        
+                        FIELDS[0].textContent = item.date;
+                        FIELDS[1].textContent = item.time;
+                        FIELDS[2].textContent = item.temp;
+                        FIELDS[3].textContent = item.feels;
+                        FIELDS[4].textContent = item.main;
+                        FIELDS[5].src = item.icon;
+    
+                        MAIN.TABS[2].lastElementChild.append(NODE);
+                    })
+                },
+                clear() {
+                    const collection = MAIN.TABS[2].lastElementChild.children;
 
-                    MAIN.TABS[2].lastElementChild.append(NODE);
-                })
-            },
-            clearForecast() {
-                const collection = MAIN.TABS[2].lastElementChild.children;
+                    while(collection.length) {
+                        collection[0].remove();
+                    }
+                },
+                expand() {
+                    const LIST = MAIN.TABS[2].querySelector('.details').cloneNode(true);
 
-                while(collection.length) {
-                    collection[0].remove();
+                    LIST.classList.add('full__forecast');
+                    LIST.classList.add('border');
+
+                    LIST.addEventListener('mouseout', event => {
+                        LIST.remove();
+                        console.log(event.target);
+                    });
+
+                    MAIN.WEATHER.firstElementChild.prepend(LIST);
                 }
-            }
+            },
         },
         FAVORITE: {
             LIKE: WEATHER.LIKE,
@@ -91,13 +108,12 @@ export const UI = {
 
                 NODE.firstElementChild.addEventListener('click', () => {
                     selectCallback(cityName);
-                    this.like();
+                    UI.WEATHER.FAVORITE.like();
                 });      
 
                 NODE.lastElementChild.addEventListener('click', () => {
                     removeCallback(cityName);
                     NODE.remove();
-                    this.dislike();
                 });
 
                 WEATHER.LIST.prepend(NODE);
@@ -120,9 +136,17 @@ export const UI = {
                     WEATHER.LIST.children[0].remove();                }
 
                 arr.forEach( item => {
-                    this.add(item, selectCallback, removeCallback);
+                    UI.WEATHER.FAVORITE.add(item, selectCallback, removeCallback);
                 });
             }
         }
     }
 };
+
+{
+    const FORECAST = UI.WEATHER.DISPLAY.FORECAST;
+
+    FORECAST.NODE.addEventListener('mouseover', () => {
+        FORECAST.expand();
+    });
+}

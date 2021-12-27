@@ -21,21 +21,18 @@ async function requestURL(cityName, url) {
 }
 
 async function getWeather(cityName) {
-    if(!cityName)  {
-        return;
-    }
+    if(!cityName)  return;
+
     try {
-
         WEATHER_STORAGE.LAST.WEATHER.set(await requestURL(cityName, WEATHER_URL.CURRENT));
-
         WEATHER_STORAGE.LAST.FORECAST.set((await requestURL(cityName, WEATHER_URL.FORECAST)));
 
         updateDisplay();
     } catch(error) { 
         console.error(error);
-        alert('not found');
+        
+
     } 
-    
 }
 
 function toCelcius(temperature) {
@@ -48,22 +45,18 @@ function toTimeHM(time) {
 }
 
 function toDateDM(time) {
-    if(!time) return;
-
-    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 
-    'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-    return time.slice(8, 10) + ' ' + MONTHS[time.slice(5, 7) - 1];
+    const DATE = new Date(time * 1000);
+    return  DATE.getDate()  + ' ' + DATE.toLocaleString('en', { month: 'short' });;
 }
 
 function toWeatherObj(obj) {
     return {
-        date: toDateDM(obj.dt_txt),
+        date: toDateDM(obj.dt),
         time: obj.dt_txt ? obj.dt_txt.slice(-8, -3) : undefined,
         temp: toCelcius(obj.main.temp),
-        feels:  toCelcius(obj.main.feels_like),
+        feels: toCelcius(obj.main.feels_like),
         main: obj.weather[0].main,
-        icon:  `${WEATHER_URL.ICON}/${obj.weather[0].icon.slice(0, 2)}n@2x.png`,
+        icon: `${WEATHER_URL.ICON}/${obj.weather[0].icon.slice(0, 2)}n@2x.png`,
         like: WEATHER_STORAGE.CITIES.includes(obj.name),
         city: obj.name,
         sunrise: toTimeHM(obj.sys.sunrise),
@@ -113,6 +106,14 @@ function updateDisplay() {
     });
 }
 
+function removeCity(cityName) {
+    if(WEATHER_STORAGE.LAST.WEATHER.get().name == cityName) {
+        UI.WEATHER.FAVORITE.dislike();
+    }
+
+    WEATHER_STORAGE.CITIES.remove(cityName);       
+}
+
 {
     const FAVORITES = UI.WEATHER.FAVORITE;
 
@@ -123,21 +124,16 @@ function updateDisplay() {
         if(!CITY) return;  
 
         if(STORAGE.includes(CITY)) {
-            STORAGE.remove(CITY);
+            removeCity(CITY);
             FAVORITES.remove(CITY);
-            FAVORITES.dislike();
             return;      
         } 
 
         STORAGE.add(CITY);
-        FAVORITES.add(CITY, getWeather, STORAGE.remove);
-        FAVORITES.like();    
+        FAVORITES.add(CITY, getWeather, removeCity);
+        FAVORITES.like();
     });
 }
-
-
-//localStorage.clear();
-
 
 if(!WEATHER_STORAGE.LAST.WEATHER.get()) {
     getWeather("City");
@@ -145,23 +141,26 @@ if(!WEATHER_STORAGE.LAST.WEATHER.get()) {
     updateDisplay();
 }
 
-UI.WEATHER.FAVORITE.update(WEATHER_STORAGE.CITIES.get(), getWeather, city => {
-    WEATHER_STORAGE.CITIES.remove(city);
-});
+UI.WEATHER.FAVORITE.update(WEATHER_STORAGE.CITIES.get(), getWeather,removeCity);
 
 /*  TODO:
 remake: 
-    localstorage using ------------ done
+    //localstorage using ------------ done
     fetch catch (add small window with notification under search)
-    modules ----------------- done
+    //modules ----------------- done
 
 add: 
-    forecast filler ----------------- done
+    //forecast filler ----------------- done
     hovers and clickers
+    show full list on hover forecast
+    shange cursor ------------- done
 
 optimize:
-    updaters ------------- done
+    //updaters ------------- done
 
-
+fix: 
+    empty errors
+    remove favor like style -------------- done
+    remove favor get storage ------------- done
 
 */

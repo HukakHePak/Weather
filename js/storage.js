@@ -17,21 +17,22 @@ export const WEATHER_STORAGE = {
             localStorage.setItem(WEATHER_STORAGE_KEY.COLLECTION, arr.join(', '));
         },
         add(str) {
-            let COLLECTION = this.get();
+            let COLLECTION = WEATHER_STORAGE.CITIES.get();
             COLLECTION.push(str);
 
-            this.set(COLLECTION);
+            WEATHER_STORAGE.CITIES.set(COLLECTION);
         },
         remove(str) {
-            const VALUE = this.get();
+            const VALUE = WEATHER_STORAGE.CITIES.get();
 
             if(!VALUE) return;
             if(!str) return;   
 
-            this.set(VALUE.filter( item => item != str ));
+            WEATHER_STORAGE.CITIES.set(VALUE.filter( item => item != str ));
         },
         includes(str) {
-            return this.get().indexOf(str) + 1;
+            const VALUE = WEATHER_STORAGE.CITIES.get();
+            return VALUE ? VALUE.indexOf(str) + 1 : false;
         },
     },
     LAST: {
@@ -46,7 +47,7 @@ export const WEATHER_STORAGE = {
         WEATHER: {
             get() {
                 const VALUE = localStorage.getItem(WEATHER_STORAGE_KEY.BUFFER);
-                return VALUE ? JSON.parse(VALUE) : {};
+                return VALUE ? JSON.parse(VALUE) : undefined;
             },
             set(obj) {
                 localStorage.setItem(WEATHER_STORAGE_KEY.BUFFER, obj);
@@ -56,9 +57,9 @@ export const WEATHER_STORAGE = {
             get() {
                 let value = localStorage.getItem(WEATHER_STORAGE_KEY.FORECAST);
 
-                value = value ? JSON.parse(value).list : {};
+                value = value ? JSON.parse(value).list : undefined;
 
-                return value ? Array.from(value) : [];
+                return value ? value : [];
             },
             set(obj) {
                 localStorage.setItem(WEATHER_STORAGE_KEY.FORECAST, obj);
