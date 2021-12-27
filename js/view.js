@@ -17,7 +17,7 @@ const WEATHER = {
     NOW: MAIN.TABS[0].querySelectorAll('.value'),
     DETAILS: MAIN.TABS[1].querySelectorAll('.value'),
     FORECAST: MAIN.TABS[2].querySelectorAll('.value'),
-    FULLCAST: MAIN.WEATHER.querySelector('.forecast__full__container'),
+    NOTIFICATION: MAIN.WEATHER.querySelector('.form__notificarion'),
 };
 
 export const UI = {
@@ -27,7 +27,16 @@ export const UI = {
             FORM: WEATHER.FORM,
             getCity() {
                 return WEATHER.FORM.city.value;
-            }   
+            },
+            notify(msg) {
+                WEATHER.NOTIFICATION.firstElementChild.textContent = msg;
+
+                WEATHER.NOTIFICATION.classList.add('active');
+
+                setTimeout(() => {
+                    WEATHER.NOTIFICATION.classList.remove('active');
+                }, 2000);
+            }
         },
         DISPLAY: {
             BUTTONS: WEATHER.BUTTONS,

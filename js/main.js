@@ -30,8 +30,7 @@ async function getWeather(cityName) {
         updateDisplay();
     } catch(error) { 
         console.error(error);
-        
-
+        UI.WEATHER.SEARCH.notify('Unknown city');
     } 
 }
 
@@ -142,25 +141,3 @@ if(!WEATHER_STORAGE.LAST.WEATHER.get()) {
 }
 
 UI.WEATHER.FAVORITE.update(WEATHER_STORAGE.CITIES.get(), getWeather,removeCity);
-
-/*  TODO:
-remake: 
-    //localstorage using ------------ done
-    fetch catch (add small window with notification under search)
-    //modules ----------------- done
-
-add: 
-    //forecast filler ----------------- done
-    hovers and clickers
-    show full list on hover forecast ---------------- done
-    shange cursor ------------- done
-    update last found city (form input. form submit)
-
-optimize:
-    //updaters ------------- done
-
-fix: 
-    empty errors
-    remove favor like style -------------- done
-    remove favor get storage ------------- done
-*/

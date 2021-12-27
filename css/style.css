@@ -401,6 +401,7 @@ body {
     color: black;
     background-color: #2F343A;
     height: 100vh;
+    background: linear-gradient(170deg, #dadada, #a499fc);
 }
 
 .wrapper {
@@ -683,6 +684,37 @@ body {
 
 ::-webkit-scrollbar {
     display: none;
+}
+
+.weather__deck .form__notificarion {
+    background-color: black;
+    display: none;
+    position: absolute;
+    left: 100px;
+    top: 60px;
+    height: 45px;
+    min-width: 140px;
+    padding: 0 15px;
+}
+
+.weather__deck .form__notificarion.active {
+    display: flex;
+}
+
+.weather__deck .form__notificarion::after {
+    content: " ";
+    position: absolute;
+    display: block;
+    left: calc(50% - 5px);
+    margin-top: -10px;
+    border-left: 10px solid transparent;
+	border-right: 10px solid transparent;
+	border-bottom: 10px solid black;
+}
+
+.weather__deck .form__notificarion span {
+    margin: auto;
+    color: white;
 }
 
 /*----------------------------------------------------------------
