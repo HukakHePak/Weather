@@ -686,7 +686,7 @@ body {
     display: none;
 }
 
-.weather__deck .form__notificarion {
+.weather__deck .form__notification {
     background-color: black;
     display: none;
     position: absolute;
@@ -697,11 +697,11 @@ body {
     padding: 0 15px;
 }
 
-.weather__deck .form__notificarion.active {
+.weather__deck .form__notification.active {
     display: flex;
 }
 
-.weather__deck .form__notificarion::after {
+.weather__deck .form__notification::after {
     content: " ";
     position: absolute;
     display: block;
@@ -712,7 +712,7 @@ body {
 	border-bottom: 10px solid black;
 }
 
-.weather__deck .form__notificarion span {
+.weather__deck .form__notification span {
     margin: auto;
     color: white;
 }
