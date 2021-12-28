@@ -1,69 +1,67 @@
-
-const WEATHER_STORAGE_KEY = {
-    COLLECTION: 'weather_favorite_collection',
-    BUFFER:'weather_buffer',
-    FORECAST: 'weather_forecast',
-    LASTAB: 'weather_opened_tab'
-}
-
-export const WEATHER_STORAGE = {
+export const STORAGE = {
+    KEY: {
+        COLLECTION: 'weather_favorite_collection',
+        BUFFER:'weather_buffer',
+        FORECAST: 'weather_forecast',
+        LASTAB: 'weather_opened_tab'
+    },
     CITIES: {
         get() {
-            const VALUE = localStorage.getItem(WEATHER_STORAGE_KEY.COLLECTION);
-            return VALUE ? VALUE.split(', ') : [];
+            const value = localStorage.getItem(STORAGE.KEY.COLLECTION);
+            return value ? value.split(', ') : [];
         },
-        set(arr) { 
-            if(!arr) return;
-            localStorage.setItem(WEATHER_STORAGE_KEY.COLLECTION, arr.join(', '));
+        set(citiesList) { 
+            if(!citiesList) return;
+            localStorage.setItem(STORAGE.KEY.COLLECTION, citiesList.join(', '));
         },
-        add(str) {
-            let COLLECTION = WEATHER_STORAGE.CITIES.get();
-            COLLECTION.push(str);
+        add(cityName) {
+            let collection = STORAGE.CITIES.get();
+            collection.push(cityName);
 
-            WEATHER_STORAGE.CITIES.set(COLLECTION);
+            STORAGE.CITIES.set(collection);
         },
-        remove(str) {
-            const VALUE = WEATHER_STORAGE.CITIES.get();
+        remove(cityName) {
+            const value = STORAGE.CITIES.get();
 
-            if(!VALUE) return;
-            if(!str) return;   
+            if(!value) return;
+            if(!cityName) return;   
 
-            WEATHER_STORAGE.CITIES.set(VALUE.filter( item => item != str ));
+            STORAGE.CITIES.set(value.filter( item => item != cityName ));
         },
-        includes(str) {
-            const VALUE = WEATHER_STORAGE.CITIES.get();
-            return VALUE ? VALUE.indexOf(str) + 1 : false;
+        includes(cityName) {
+            const value = STORAGE.CITIES.get();
+            return value ? value.indexOf(cityName) + 1 : false;
         },
     },
     LAST: {
         TAB: {
             get() {
-                return localStorage.getItem(WEATHER_STORAGE_KEY.LASTAB);
+                return localStorage.getItem(STORAGE.KEY.LASTAB);
             },
-            set(index) {
-                localStorage.setItem(WEATHER_STORAGE_KEY.LASTAB, index);
+            set(tabIndex) {
+                localStorage.setItem(STORAGE.KEY.LASTAB, tabIndex);
             }
         },
         WEATHER: {
             get() {
-                const VALUE = localStorage.getItem(WEATHER_STORAGE_KEY.BUFFER);
+                const VALUE = localStorage.getItem(STORAGE.KEY.BUFFER);
                 return VALUE ? JSON.parse(VALUE) : undefined;
             },
             set(obj) {
-                localStorage.setItem(WEATHER_STORAGE_KEY.BUFFER, obj);
+                localStorage.setItem(STORAGE.KEY.BUFFER, obj);
             }
         },
         FORECAST: {
             get() {
-                let value = localStorage.getItem(WEATHER_STORAGE_KEY.FORECAST);
+                let value = localStorage.getItem(STORAGE.KEY.FORECAST);
 
                 value = value ? JSON.parse(value).list : undefined;
 
                 return value ? value : [];
             },
             set(obj) {
-                localStorage.setItem(WEATHER_STORAGE_KEY.FORECAST, obj);
+                localStorage.setItem(STORAGE.KEY.FORECAST, obj);
             }
         }
-    }
+    }    
 }

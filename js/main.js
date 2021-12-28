@@ -1,7 +1,7 @@
 import { UI } from './view.js'
-import { WEATHER_STORAGE } from './storage.js';
+import { STORAGE } from './storage.js';
 
-const WEATHER_URL = {
+const URL = {
     CURRENT: 'https://api.openweathermap.org/data/2.5/weather',
     FORECAST: 'https://api.openweathermap.org/data/2.5/forecast',
     ICON: 'https://openweathermap.org/img/wn',
@@ -9,28 +9,26 @@ const WEATHER_URL = {
 }
 
 async function requestURL(cityName, url) {
-    const RESPONSE = await fetch(`${url}?q=${cityName}&appid=${WEATHER_URL.API_KEY}`);
+    const response = await fetch(`${url}?q=${cityName}&appid=${URL.API_KEY}`);
 
-    const WEATHER = await RESPONSE.text()
+    if(!response.ok) {
+        throw new Error(response);
+    }
 
-    if(JSON.parse(WEATHER).cod == '404') {
-        throw new Error(WEATHER);
-    } 
-
-    return WEATHER;        
+    return await response.text();        
 }
 
 async function getWeather(cityName) {
     if(!cityName)  return;
 
     try {
-        WEATHER_STORAGE.LAST.WEATHER.set(await requestURL(cityName, WEATHER_URL.CURRENT));
-        WEATHER_STORAGE.LAST.FORECAST.set((await requestURL(cityName, WEATHER_URL.FORECAST)));
+        STORAGE.LAST.WEATHER.set( await requestURL(cityName, URL.CURRENT) );
+        STORAGE.LAST.FORECAST.set( await requestURL(cityName, URL.FORECAST) );
 
         updateDisplay();
     } catch(error) { 
         console.error(error);
-        UI.WEATHER.SEARCH.notify('Unknown city');
+        UI.WEATHER.SEARCH_FORM.notify('Unknown city');
     } 
 }
 
@@ -39,13 +37,13 @@ function toCelcius(temperature) {
 }
 
 function toTimeHM(time) {
-    const DATE = new Date(time * 1000);
-    return DATE.getHours() + ':' + DATE.getMinutes();
+    const date = new Date(time * 1000);
+    return date.getHours() + ':' + date.getMinutes();
 }
 
 function toDateDM(time) {
-    const DATE = new Date(time * 1000);
-    return  DATE.getDate()  + ' ' + DATE.toLocaleString('en', { month: 'short' });;
+    const date = new Date(time * 1000);
+    return  date.getDate()  + ' ' + date.toLocaleString('en', { month: 'short' });;
 }
 
 function toWeatherObj(obj) {
@@ -55,8 +53,8 @@ function toWeatherObj(obj) {
         temp: toCelcius(obj.main.temp),
         feels: toCelcius(obj.main.feels_like),
         main: obj.weather[0].main,
-        icon: `${WEATHER_URL.ICON}/${obj.weather[0].icon.slice(0, 2)}n@2x.png`,
-        like: WEATHER_STORAGE.CITIES.includes(obj.name),
+        icon: `${URL.ICON}/${obj.weather[0].icon.slice(0, 2)}n@2x.png`,
+        like: STORAGE.CITIES.includes(obj.name),
         city: obj.name,
         sunrise: toTimeHM(obj.sys.sunrise),
         sunset: toTimeHM(obj.sys.sunset),
@@ -64,80 +62,82 @@ function toWeatherObj(obj) {
 }
 
 function updateDisplay() {
-    const LIST = [];
+    const List = [];
 
-    const FORECAST = WEATHER_STORAGE.LAST.FORECAST.get();
-    if(!FORECAST) return;
+    const lastForecast = STORAGE.LAST.FORECAST.get();
 
-    FORECAST.forEach( item => {
-        LIST.push( toWeatherObj(item) );
+    if(!lastForecast) return;
+
+    lastForecast.forEach( weather => {
+        List.push( toWeatherObj(weather) );
     });
 
-    UI.WEATHER.DISPLAY.update(toWeatherObj(WEATHER_STORAGE.LAST.WEATHER.get()), LIST);
+    UI.WEATHER.DISPLAY.TABS.update( toWeatherObj( STORAGE.LAST.WEATHER.get() ), List);
 };
 
 {
-    const DISPLAY = UI.WEATHER.DISPLAY;
+    const display = UI.WEATHER.DISPLAY;
 
-    DISPLAY.BUTTONS.forEach( (button, index) => {
+    display.BUTTONS.forEach( (button, index) => {
         button.addEventListener('click', () => {
-            DISPLAY.clear();
-            DISPLAY.select(index);
-            WEATHER_STORAGE.LAST.TAB.set(index);
-        });});
-}
+            display.TABS.clear();
+            display.TABS.select(index);
 
-{
-    const ACTIVE_TAB = WEATHER_STORAGE.LAST.TAB.get();
-
-    if(ACTIVE_TAB) {
-        UI.WEATHER.DISPLAY.BUTTONS[ACTIVE_TAB].click();
-    } 
-}
-
-{
-    const SEARCH = UI.WEATHER.SEARCH;
-    
-    SEARCH.FORM.addEventListener('submit', event => {  
-        getWeather( SEARCH.getCity() );
-        SEARCH.FORM.reset(); 
-        event.preventDefault(); 
+            STORAGE.LAST.TAB.set(index);
+        });
     });
 }
 
+{
+    const activeTab = STORAGE.LAST.TAB.get();
+
+    if(activeTab) {
+        UI.WEATHER.DISPLAY.BUTTONS[activeTab].click();
+    } 
+} 
+
 function removeCity(cityName) {
-    if(WEATHER_STORAGE.LAST.WEATHER.get().name == cityName) {
+    if(STORAGE.LAST.WEATHER.get().name == cityName) {
         UI.WEATHER.FAVORITE.dislike();
     }
 
-    WEATHER_STORAGE.CITIES.remove(cityName);       
+    STORAGE.CITIES.remove(cityName);       
 }
 
 {
-    const FAVORITES = UI.WEATHER.FAVORITE;
+    const favorite = UI.WEATHER.FAVORITE;
 
-    FAVORITES.LIKE.addEventListener('click', () => {
-        const STORAGE = WEATHER_STORAGE.CITIES;
-        const CITY = WEATHER_STORAGE.LAST.WEATHER.get().name;
+    favorite.LIKE.addEventListener('click', () => {
+        const CITY = STORAGE.LAST.WEATHER.get().name;
 
         if(!CITY) return;  
 
-        if(STORAGE.includes(CITY)) {
+        if(STORAGE.CITIES.includes(CITY)) {
             removeCity(CITY);
-            FAVORITES.remove(CITY);
+            favorite.LIST.remove(CITY);
+
             return;      
         } 
 
-        STORAGE.add(CITY);
-        FAVORITES.add(CITY, getWeather, removeCity);
-        FAVORITES.like();
+        STORAGE.CITIES.add(CITY);
+        favorite.LIST.add(CITY, getWeather, removeCity);
+        favorite.like();
     });
 }
 
-if(!WEATHER_STORAGE.LAST.WEATHER.get()) {
-    getWeather("City");
-} else {
-    updateDisplay();
-}
+{
+    const search = UI.WEATHER.SEARCH_FORM;
+    
+    search.NODE.addEventListener('submit', event => {  
+        getWeather( search.getCity() );
+        
+        search.NODE.reset(); 
+        event.preventDefault(); 
+    });
 
-UI.WEATHER.FAVORITE.update(WEATHER_STORAGE.CITIES.get(), getWeather,removeCity);
+    const lastCity = STORAGE.LAST.WEATHER.get();
+
+    !lastCity ? getWeather("City") : getWeather(lastCity.name);
+
+    UI.WEATHER.FAVORITE.LIST.update(STORAGE.CITIES.get(), getWeather,removeCity);
+}

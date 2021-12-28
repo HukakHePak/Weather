@@ -629,7 +629,15 @@ body {
     margin-top: 4px;
 }
 
-.weather__deck .forecast .details > li, .weather__deck .full__forecast.details > li {
+.weather__deck .forecast > span {
+    position: relative;
+}
+
+.weather__deck .forecast {
+    flex-direction: column;
+}
+
+.weather__deck .forecast .details > li {
     width: 100%;
     height: 120px;
     margin-bottom: 9px;
@@ -640,8 +648,7 @@ body {
     flex-direction: column;
 }
 
-.weather__deck .forecast .date, .weather__deck .forecast .stats,
-.weather__deck .full__forecast .stats, .weather__deck .full__forecast .date  {
+.weather__deck .forecast .date, .weather__deck .forecast .stats  {
     display: flex;
     justify-content: space-between;
 }
@@ -651,35 +658,24 @@ body {
     flex-direction: column;
 }
 
-.weather__deck .forecast .stats ul, .weather__deck .full__forecast .stats ul {
+.weather__deck .forecast .stats ul {
     margin-bottom: 0;
     align-self: center;
 }
 
-.weather__deck .forecast .stats ul > li , .weather__deck .full__forecast .stats ul > li {
+.weather__deck .forecast .stats ul > li {
     margin: 0;
     display: inline-block;
 }
 
-.weather__deck .forecast figure, .weather__deck .full__forecast figure {
+.weather__deck .forecast figure{
     text-align: center;
 }
 
-.weather__deck .forecast figure img, .weather__deck .full__forecast figure img {
+.weather__deck .forecast figure img {
     width: 31px;
     height: 31px;
     filter: drop-shadow( 0 0 1px rgb(0, 0, 0));
-}
-
-.weather__deck .full__forecast {
-    display: flex;
-    position: absolute;
-    background-color: white;
-    height: 100%;
-    width: 50%;
-    z-index: 1;
-    left: 0; 
-    flex-direction: column;
 }
 
 ::-webkit-scrollbar {
