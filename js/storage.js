@@ -1,31 +1,38 @@
+const KEY = {
+    LASTAB: 'weather_opened_tab',
+    LASTCITY: 'last_found_city',
+    FAVORITES: 'cuttent_list_favorites'
+};
+
+
 export const STORAGE = {
     KEY: {
-        COLLECTION: 'weather_favorite_collection',
-        BUFFER:'weather_buffer',
-        FORECAST: 'weather_forecast',
-        LASTAB: 'weather_opened_tab'
+        LASTAB: 'weather_opened_tab',
+        LASTCITY: 'last_found_city',
+        FAVORITES: 'cuttent_list_favorites'
     },
-    CITIES: {
+    FAVORITES: {
         get() {
             try {
-                return new Set(JSON.parse(localStorage.getItem(STORAGE.KEY.COLLECTION)));
+                return new Set(JSON.parse(localStorage.getItem(STORAGE.KEY.FAVORITES)));
             } catch { return new Set(); };
         },
         set(cities) { 
-            localStorage.setItem(STORAGE.KEY.COLLECTION, JSON.stringify([...cities]));
+            localStorage.setItem(STORAGE.KEY.FAVORITES, JSON.stringify([...cities]));
         },
         add(cityName) {
-            STORAGE.CITIES.set(STORAGE.CITIES.get().add(cityName));
+            STORAGE.FAVORITES.set(STORAGE.FAVORITES.get().add(cityName));
         },
         remove(cityName) {
-            const cities = STORAGE.CITIES.get();
+            const cities = STORAGE.FAVORITES.get();
             cities.delete(cityName);
-            STORAGE.CITIES.set(cities);
+            STORAGE.FAVORITES.set(cities);
         },
         includes(cityName) {
-            return STORAGE.CITIES.get().has(cityName);
+            return STORAGE.FAVORITES.get().has(cityName);
         },
     },
+
     LAST: {
         TAB: {
             get() {
@@ -35,25 +42,15 @@ export const STORAGE = {
                 localStorage.setItem(STORAGE.KEY.LASTAB, tabIndex);
             }
         },
-        WEATHER: {
+        CITY: {
             get() {
-                const VALUE = localStorage.getItem(STORAGE.KEY.BUFFER);
-                return VALUE ? JSON.parse(VALUE) : undefined;
+                return localStorage.getItem(STORAGE.KEY.LASTCITY);
             },
-            set(weather) {
-                localStorage.setItem(STORAGE.KEY.BUFFER, weather);
-            }
-        },
-        FORECAST: {
-            get() {
-                try{
-                    return JSON.parse(localStorage.getItem(STORAGE.KEY.FORECAST));
-                } catch {
-                    return [];
-                };
+            set(cityName) {
+                localStorage.setItem(STORAGE.KEY.LASTCITY, cityName);
             },
-            set(forecast) {
-                localStorage.setItem(STORAGE.KEY.FORECAST, forecast);
+            isFavorite() {
+                return STORAGE.FAVORITES.includes(STORAGE.LAST.CITY.get());
             }
         }
     }

@@ -1,5 +1,9 @@
 const WEATHER = document.querySelector('#weather');
 
+const NODES = {
+
+};
+
 export const UI = {
     WEATHER: {
         NODE: WEATHER,
@@ -74,7 +78,7 @@ export const UI = {
                     UI.WEATHER.DISPLAY.TABS.NODES[index].classList.add('active');
                     UI.WEATHER.DISPLAY.BUTTONS[index].classList.add('active');
                 },
-                update(weather, forecast) {
+                update(weather) {
                     weather.like ? UI.WEATHER.FAVORITE.like() : UI.WEATHER.FAVORITE.dislike();
 
                     const nowTab = UI.WEATHER.DISPLAY.TABS.NOW.VALUES;
@@ -91,8 +95,8 @@ export const UI = {
 
                     forecastTab.NODE.firstElementChild.textContent = weather.city;
                     
-                    forecastTab.LIST.clear()
-                    forecastTab.LIST.fill(forecast);
+                    forecastTab.LIST.clear();
+                    forecastTab.LIST.fill(weather.forecast);
                 },
             },
         },
@@ -126,16 +130,11 @@ export const UI = {
                         }
                     })
                 },
-                update(cityList, selectCallback, removeCallback) {
-                    const favoriteListNode = UI.WEATHER.FAVORITE.LIST.NODE;
-
-                    while(favoriteListNode.children.length) {
-                        favoriteListNode.children[0].remove();
+                clear() {
+                    const nodes = UI.WEATHER.FAVORITE.LIST.NODE.children;
+                    while(nodes.length) {
+                        nodes[0].remove();
                     }
-    
-                    cityList.forEach( city => {
-                        UI.WEATHER.FAVORITE.LIST.add(city, selectCallback, removeCallback);
-                    });
                 }
             },
             like() {
