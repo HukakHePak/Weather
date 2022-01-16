@@ -74,12 +74,12 @@ export const UI = {
                     UI.WEATHER.DISPLAY.TABS.NODES[index].classList.add('active');
                     UI.WEATHER.DISPLAY.BUTTONS[index].classList.add('active');
                 },
-                update(weather, forecastList) {
+                update(weather, forecast) {
                     weather.like ? UI.WEATHER.FAVORITE.like() : UI.WEATHER.FAVORITE.dislike();
 
                     const nowTab = UI.WEATHER.DISPLAY.TABS.NOW.VALUES;
                     const detailsTab = UI.WEATHER.DISPLAY.TABS.DETAILS.VALUES;
-                    const forecast = UI.WEATHER.DISPLAY.TABS.FORECAST;
+                    const forecastTab = UI.WEATHER.DISPLAY.TABS.FORECAST;
                     
                     nowTab[0].src = weather.icon;
                     nowTab[1].textContent = detailsTab[1].textContent = weather.temp;
@@ -89,10 +89,10 @@ export const UI = {
                     detailsTab[4].textContent = weather.sunrise;
                     detailsTab[5].textContent = weather.sunset;
 
-                    forecast.NODE.firstElementChild.textContent = weather.city;
+                    forecastTab.NODE.firstElementChild.textContent = weather.city;
                     
-                    forecast.LIST.clear()
-                    forecast.LIST.fill(forecastList);
+                    forecastTab.LIST.clear()
+                    forecastTab.LIST.fill(forecast);
                 },
             },
         },

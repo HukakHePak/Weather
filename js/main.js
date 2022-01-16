@@ -11,15 +11,13 @@ const URL = {
 async function requestURL(cityName, url) {
     const response = await fetch(`${url}?q=${cityName}&appid=${URL.API_KEY}`);
 
-    if(!response.ok) {
-        throw new Error(response);
-    }
+    if(response.ok) return await response.text(); 
 
-    return await response.text();        
+    throw new Error(response);     
 }
 
 async function getWeather(cityName) {
-    if(!cityName)  return;
+    if(!cityName) return;
 
     try {
         STORAGE.LAST.WEATHER.set( await requestURL(cityName, URL.CURRENT) );
@@ -131,8 +129,8 @@ function removeCity(cityName) {
     search.NODE.addEventListener('submit', event => {  
         getWeather( search.getCity() );
         
-        search.NODE.reset(); 
-        event.preventDefault(); 
+        search.NODE.reset();
+        event.preventDefault();
     });
 
     const lastCity = STORAGE.LAST.WEATHER.get();
@@ -141,3 +139,13 @@ function removeCity(cityName) {
 
     UI.WEATHER.FAVORITE.LIST.update(STORAGE.CITIES.get(), getWeather,removeCity);
 }
+
+// let set = new Set();
+// set.add('first city');
+// set.add('second city');
+// console.log(...set);
+
+// localStorage.setItem('test', JSON.stringify([...set]));
+// let get = new Set(JSON.parse(localStorage.getItem('test')));
+// get.delete('first city');
+// console.log(get);

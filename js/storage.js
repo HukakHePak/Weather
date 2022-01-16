@@ -7,30 +7,28 @@ export const STORAGE = {
     },
     CITIES: {
         get() {
-            const value = localStorage.getItem(STORAGE.KEY.COLLECTION);
-            return value ? value.split(', ') : [];
+            const cities = localStorage.getItem(STORAGE.KEY.COLLECTION);
+            return cities ? cities.split(', ') : [];
         },
-        set(citiesList) { 
-            if(!citiesList) return;
-            localStorage.setItem(STORAGE.KEY.COLLECTION, citiesList.join(', '));
+        set(cities) { 
+            if(!cities) return;
+            localStorage.setItem(STORAGE.KEY.COLLECTION, cities.join(', '));
         },
         add(cityName) {
-            let collection = STORAGE.CITIES.get();
-            collection.push(cityName);
-
-            STORAGE.CITIES.set(collection);
+            const cities = (new Set(STORAGE.CITIES.get())).add(cityName);
+            STORAGE.CITIES.set([...cities]);
         },
         remove(cityName) {
-            const value = STORAGE.CITIES.get();
+            if(!cityName) return; 
 
-            if(!value) return;
-            if(!cityName) return;   
+            const cities = STORAGE.CITIES.get();
 
-            STORAGE.CITIES.set(value.filter( item => item != cityName ));
+            if(cities) 
+                STORAGE.CITIES.set(cities.filter( city => city != cityName ));
         },
         includes(cityName) {
-            const value = STORAGE.CITIES.get();
-            return value ? value.indexOf(cityName) + 1 : false;
+            const cities = STORAGE.CITIES.get();
+            return cities ? cities.indexOf(cityName) + 1 : false;
         },
     },
     LAST: {
@@ -47,21 +45,21 @@ export const STORAGE = {
                 const VALUE = localStorage.getItem(STORAGE.KEY.BUFFER);
                 return VALUE ? JSON.parse(VALUE) : undefined;
             },
-            set(obj) {
-                localStorage.setItem(STORAGE.KEY.BUFFER, obj);
+            set(weather) {
+                localStorage.setItem(STORAGE.KEY.BUFFER, weather);
             }
         },
         FORECAST: {
             get() {
-                let value = localStorage.getItem(STORAGE.KEY.FORECAST);
-
-                value = value ? JSON.parse(value).list : undefined;
-
-                return value ? value : [];
+                try{
+                    return JSON.parse(localStorage.getItem(STORAGE.KEY.FORECAST)).list;
+                } catch {
+                    return [];
+                }
             },
-            set(obj) {
-                localStorage.setItem(STORAGE.KEY.FORECAST, obj);
+            set(forecast) {
+                localStorage.setItem(STORAGE.KEY.FORECAST, forecast);
             }
         }
-    }    
+    }
 }
