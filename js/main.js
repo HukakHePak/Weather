@@ -60,12 +60,11 @@ function toWeatherObj(obj) {
 }
 
 function updateDisplay() {
-    const List = [];
-
-    const lastForecast = STORAGE.LAST.FORECAST.get();
+    const lastForecast = STORAGE.LAST.FORECAST.get().list;
 
     if(!lastForecast) return;
 
+    const List = [];
     lastForecast.forEach( weather => {
         List.push( toWeatherObj(weather) );
     });

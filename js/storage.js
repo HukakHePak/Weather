@@ -7,28 +7,23 @@ export const STORAGE = {
     },
     CITIES: {
         get() {
-            const cities = localStorage.getItem(STORAGE.KEY.COLLECTION);
-            return cities ? cities.split(', ') : [];
+            try {
+                return new Set(JSON.parse(localStorage.getItem(STORAGE.KEY.COLLECTION)));
+            } catch { return new Set(); };
         },
         set(cities) { 
-            if(!cities) return;
-            localStorage.setItem(STORAGE.KEY.COLLECTION, cities.join(', '));
+            localStorage.setItem(STORAGE.KEY.COLLECTION, JSON.stringify([...cities]));
         },
         add(cityName) {
-            const cities = (new Set(STORAGE.CITIES.get())).add(cityName);
-            STORAGE.CITIES.set([...cities]);
+            STORAGE.CITIES.set(STORAGE.CITIES.get().add(cityName));
         },
         remove(cityName) {
-            if(!cityName) return; 
-
             const cities = STORAGE.CITIES.get();
-
-            if(cities) 
-                STORAGE.CITIES.set(cities.filter( city => city != cityName ));
+            cities.delete(cityName);
+            STORAGE.CITIES.set(cities);
         },
         includes(cityName) {
-            const cities = STORAGE.CITIES.get();
-            return cities ? cities.indexOf(cityName) + 1 : false;
+            return STORAGE.CITIES.get().has(cityName);
         },
     },
     LAST: {
@@ -52,10 +47,10 @@ export const STORAGE = {
         FORECAST: {
             get() {
                 try{
-                    return JSON.parse(localStorage.getItem(STORAGE.KEY.FORECAST)).list;
+                    return JSON.parse(localStorage.getItem(STORAGE.KEY.FORECAST));
                 } catch {
                     return [];
-                }
+                };
             },
             set(forecast) {
                 localStorage.setItem(STORAGE.KEY.FORECAST, forecast);
