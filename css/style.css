@@ -684,13 +684,18 @@ body {
 
 .weather__deck .form__notification {
     background-color: black;
-    display: none;
+    text-align: center;
+    color: white;
     position: absolute;
+    display:none;
     left: 100px;
     top: 60px;
     height: 45px;
     min-width: 140px;
-    padding: 0 15px;
+    padding: 15px;
+    padding-top: 12px;
+    box-sizing: border-box;
+    z-index: 10;
 }
 
 .weather__deck > .form__notification.active {
@@ -701,16 +706,11 @@ body {
     content: " ";
     position: absolute;
     display: block;
-    left: calc(50% - 5px);
-    margin-top: -10px;
+    left: calc(50% - 10px);
+    top: -10px;
     border-left: 10px solid transparent;
 	border-right: 10px solid transparent;
 	border-bottom: 10px solid black;
-}
-
-.weather__deck > .form__notification span {
-    margin: auto;
-    color: white;
 }
 
 /*----------------------------------------------------------------

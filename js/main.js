@@ -10,7 +10,10 @@ async function updateWeather(cityName) {
         
         changeLike();
         CONTROLS.updateTabs(response);
-    })
+    }).catch( error => {
+        console.log(error);
+        CONTROLS.notify('Unknow city');
+    });
 }
 
 function changeLike() {

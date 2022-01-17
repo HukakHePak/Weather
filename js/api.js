@@ -6,38 +6,27 @@ export const URLS = {
 }
 
 async function requestURL(cityName, url) {
-    const response = await fetch(`${url}?q=${cityName}&appid=${URLS.API_KEY}`);
-
-    if(response.ok) return await response.text(); 
-
-    throw new Error(response);     
+    return await fetch(`${url}?q=${cityName}&appid=${URLS.API_KEY}`).then(res => res.json());
 }
 
 export async function requestWeather(cityName) {
-    return new Promise(async (resolve, reject) => {
-        try {
-            const data = await requestURL(cityName, URLS.CURRENT).then(JSON.parse).then( simplifyWeatherData );
-            const forecast = await requestURL(cityName, URLS.FORECAST).then(JSON.parse);
-            
-            data.forecast = forecast.list.map( simplifyWeatherData );
-            resolve(data);
-        } catch(error) { 
-            reject(error);
-        } 
-    })
+    const data = await requestURL(cityName, URLS.CURRENT).then( simplifyWeatherData );
+    data.forecast = await requestURL(cityName, URLS.FORECAST).then(res => res.list.map( simplifyWeatherData ));
+
+    return data;
 }
 
 function simplifyWeatherData(data) {
     return {
-        date: toDateDM(data.dt),
+        date: convertDate(data.dt).date,
         time: data.dt_txt ? data.dt_txt.slice(-8, -3) : undefined,
         temp: toCelcius(data.main.temp),
         feels: toCelcius(data.main.feels_like),
         main: data.weather[0].main,
         icon: `${URLS.ICON}/${data.weather[0].icon.slice(0, 2)}n@2x.png`,
         city: data.name,
-        sunrise: toTimeHM(data.sys.sunrise),
-        sunset: toTimeHM(data.sys.sunset),
+        sunrise: convertDate(data.sys.sunrise).time,
+        sunset: convertDate(data.sys.sunset).time,
     };
 }
 
@@ -45,12 +34,10 @@ function toCelcius(temperature) {
     return Math.round(temperature - 273);
 }
 
-function toTimeHM(time) {
-    const date = new Date(time * 1000);
-    return date.getHours() + ':' + date.getMinutes();
-}
-
-function toDateDM(time) {
-    const date = new Date(time * 1000);
-    return  date.getDate()  + ' ' + date.toLocaleString('en', { month: 'short' });;
+function convertDate(milisec) {
+    const date = new Date(milisec * 1000);
+    return {
+        time: date.getHours() + ':' + date.getMinutes(),
+        date: date.getDate()  + ' ' + date.toLocaleString('en', { month: 'short' })
+    }
 }
