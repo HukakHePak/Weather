@@ -22,7 +22,7 @@ function simplifyWeatherData(data) {
         time: data.dt_txt ? data.dt_txt.slice(-8, -3) : undefined,
         temp: toCelcius(data.main.temp),
         feels: toCelcius(data.main.feels_like),
-        main: data.weather[0].main,
+        weather: data.weather[0].main,
         icon: `${URLS.ICON}/${data.weather[0].icon.slice(0, 2)}n@2x.png`,
         city: data.name,
         sunrise: convertDate(data.sys.sunrise).time,
