@@ -1,99 +1,74 @@
-import { UI } from './view.js'
+import { NODES, CONTROLS } from './view.js'
 import { STORAGE } from './storage.js';
 import { requestWeather } from './api.js';
 
 async function updateWeather(cityName) {
     if(!cityName) return;
 
-    requestWeather(cityName)
-    .then(weather => {
-        changeLikeButton();
-        STORAGE.LAST.CITY.set(weather.city);
-        UI.WEATHER.DISPLAY.TABS.update(weather);
+    requestWeather(cityName).then(response => {
+        STORAGE.setCity(response.city);
+        
+        changeLike();
+        CONTROLS.updateTabs(response);
     })
-    .catch((error) => {
-        console.error(error);
-        UI.WEATHER.SEARCH_FORM.notify('Unknown city');
-        return undefined;
-    });
 }
 
-function changeLikeButton() {
-    const favorite = UI.WEATHER.FAVORITE;
-
-    if(STORAGE.LAST.CITY.isFavorite()) {
-        favorite.like();
-        return;
-    }
-    favorite.dislike();
+function changeLike() {
+    CONTROLS.setLike(STORAGE.isFavorite(STORAGE.getCity()));
 }
 
-{
-    const display = UI.WEATHER.DISPLAY;
-    const tab = STORAGE.LAST.TAB;
+function removeCity(city) {
+    CONTROLS.removeFavorite(city)
+    STORAGE.removeFavorite(city)
+}
 
-    display.BUTTONS.forEach( (button, index) => {
-        button.addEventListener('click', () => {
-            display.TABS.clear();
-            display.TABS.select(index);
+function addCity(city) {
+    CONTROLS.addFavorite(city);
+    STORAGE.addFavorite(city);
+}
 
-            tab.set(index);
-        });
+NODES.FAVORITES.addEventListener('add', event => {
+    const city = event.detail.city;
+
+    const favoriteNode = event.detail.node;
+
+    favoriteNode.lastElementChild.addEventListener('click', () => {
+        removeCity(city);
+        changeLike();
     });
 
-    const activeTab = tab.get();
-
-    if(activeTab) display.BUTTONS[activeTab].click();
-} 
-
-function addFavoriteCity(cityName) {
-    UI.WEATHER.FAVORITE.LIST.add(cityName, updateWeather, removeFavoriteCity);
-}
-
-function removeFavoriteCity(cityName) {
-    if(STORAGE.LAST.WEATHER.get().name == cityName)
-        UI.WEATHER.FAVORITE.dislike();
-        
-    STORAGE.CITIES.remove(cityName);   
-}
-
-{
-    const favorite = UI.WEATHER.FAVORITE;
-
-    favorite.LIKE.addEventListener('click', () => {
-        const cityName = STORAGE.LAST.CITY.get();
-
-        if(!cityName) return;  
-
-        if(STORAGE.CITIES.includes(cityName)) {
-            removeFavoriteCity(cityName); 
-            favorite.LIST.remove(cityName);
-            return;      
-        } 
-
-        STORAGE.CITIES.add(cityName);
-        addFavoriteCity(cityName);
-
-        favorite.like();
+    event.detail.node.firstElementChild.addEventListener('click', () => {
+        updateWeather(city);
     });
-}
-
-{
-    const search = UI.WEATHER.SEARCH_FORM;
     
-    search.NODE.addEventListener('submit', event => {  
-        updateWeather( search.getCity() );
-        
-        search.NODE.reset();
-        event.preventDefault();
+    changeLike();
+})
+
+NODES.LIKE.addEventListener('click', () => {
+    const city = STORAGE.getCity();
+    if(!city) return;
+
+    STORAGE.isFavorite(city) ? removeCity(city) : addCity(city);
+});
+
+NODES.FORM.addEventListener('submit', event => {  
+    updateWeather(event.target.city.value);
+
+    NODES.FORM.reset();
+    event.preventDefault();
+});
+
+NODES.BUTTONS.forEach((button, index) => {
+    button.addEventListener('click', () => {
+        STORAGE.setTab(index);
     });
-}
+})
 
-window.onload = () => {
-    const lastCity = STORAGE.LAST.CITY.get();
-    updateWeather(lastCity ? lastCity : 'City');
-    
-    UI.WEATHER.FAVORITE.LIST.clear();
+NODES.BUTTONS[STORAGE.getTab()].click();
 
-    STORAGE.FAVORITES.get().forEach( addFavoriteCity );
-};
+//const lastCity = STORAGE.LAST.CITY.get();
+//updateWeather(STORAGE.getCity() || 'City');
+//NODES.FORM.city.value = 'City';
+//NODES.FORM.click();
+
+STORAGE.getFavorites().forEach( CONTROLS.addFavorite );

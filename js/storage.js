@@ -1,57 +1,39 @@
-const KEY = {
+const KEYS = {
     LASTAB: 'weather_opened_tab',
     LASTCITY: 'last_found_city',
-    FAVORITES: 'cuttent_list_favorites'
+    FAVORITES: 'current_list_favorites'
 };
 
-
 export const STORAGE = {
-    KEY: {
-        LASTAB: 'weather_opened_tab',
-        LASTCITY: 'last_found_city',
-        FAVORITES: 'cuttent_list_favorites'
+    getFavorites() {
+        try {
+            return new Set(JSON.parse(localStorage.getItem(KEYS.FAVORITES)));
+        } catch { return new Set() };
     },
-    FAVORITES: {
-        get() {
-            try {
-                return new Set(JSON.parse(localStorage.getItem(STORAGE.KEY.FAVORITES)));
-            } catch { return new Set(); };
-        },
-        set(cities) { 
-            localStorage.setItem(STORAGE.KEY.FAVORITES, JSON.stringify([...cities]));
-        },
-        add(cityName) {
-            STORAGE.FAVORITES.set(STORAGE.FAVORITES.get().add(cityName));
-        },
-        remove(cityName) {
-            const cities = STORAGE.FAVORITES.get();
-            cities.delete(cityName);
-            STORAGE.FAVORITES.set(cities);
-        },
-        includes(cityName) {
-            return STORAGE.FAVORITES.get().has(cityName);
-        },
+    setFavorites(favorites) {
+        localStorage.setItem(KEYS.FAVORITES, JSON.stringify([...favorites]));
     },
-
-    LAST: {
-        TAB: {
-            get() {
-                return localStorage.getItem(STORAGE.KEY.LASTAB);
-            },
-            set(tabIndex) {
-                localStorage.setItem(STORAGE.KEY.LASTAB, tabIndex);
-            }
-        },
-        CITY: {
-            get() {
-                return localStorage.getItem(STORAGE.KEY.LASTCITY);
-            },
-            set(cityName) {
-                localStorage.setItem(STORAGE.KEY.LASTCITY, cityName);
-            },
-            isFavorite() {
-                return STORAGE.FAVORITES.includes(STORAGE.LAST.CITY.get());
-            }
-        }
-    }
+    addFavorite(favorite) {
+        STORAGE.setFavorites(STORAGE.getFavorites().add(favorite));
+    },
+    removeFavorite(favorite) {
+        const favorites = STORAGE.getFavorites();
+        favorites.delete(favorite);
+        STORAGE.setFavorites(favorites);
+    },
+    isFavorite(city) {
+        return STORAGE.getFavorites().has(city);
+    },
+    getTab() {
+        return localStorage.getItem(KEYS.LASTAB);
+    },
+    setTab(tab) {
+        localStorage.setItem(KEYS.LASTAB, tab);
+    },
+    getCity() {
+        return localStorage.getItem(KEYS.LASTCITY);
+    },
+    setCity(city) {
+        localStorage.setItem(KEYS.LASTCITY, city);
+    }   
 }

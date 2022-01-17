@@ -1,148 +1,106 @@
 const WEATHER = document.querySelector('#weather');
 
-const NODES = {
+const FORM = document.forms.weather;
+const NOTIFICATION = WEATHER.querySelector('.form__notification');
+const LIKE = WEATHER.querySelector('.like');
 
+const TABS = {
+    COLLECTION: WEATHER.querySelectorAll('.presents .description > *'),
+    NOW: WEATHER.querySelector('.presents .description > .now'),
+    DETAILS: WEATHER.querySelector('.presents .description > .details'),
+    FORECAST: WEATHER.querySelector('.presents .description > .forecast')
+}
+const BUTTONS = WEATHER.querySelectorAll('.presents .selects button');
+
+const DISPLAY = WEATHER.querySelector('.presents .description');
+
+const TEMPLATES = {
+    FAVORITES: WEATHER.querySelector('.favourite .locations .city'),
+    FORECAST: WEATHER.querySelector('.presents .description > .forecast .details li'),
+}
+
+const FAVORITES = WEATHER.querySelector('.favourite .locations');
+
+export const NODES = {
+    FORM,
+    LIKE,
+    DISPLAY,
+    BUTTONS,
+    FAVORITES,
 };
 
-export const UI = {
-    WEATHER: {
-        NODE: WEATHER,
-        SEARCH_FORM: {
-            NODE: document.forms.weather,
-            NOTIFICATION: WEATHER.querySelector('.form__notification'),
-            getCity() {
-                return UI.WEATHER.SEARCH_FORM.NODE.city.value;
-            },
-            notify(msg) {
-                const notifyNode = UI.WEATHER.SEARCH_FORM.NOTIFICATION;
-                
-                notifyNode.textContent = msg;
-                notifyNode.classList.add('active');
+export const CONTROLS = {
+    notify(msg) {            
+        NOTIFICATION.textContent = msg;
+        activate(NOTIFICATION);
 
-                setTimeout( () => {
-                    notifyNode.classList.remove('active');
-                }, 2000);
-            }
-        },
-        DISPLAY: {
-            BUTTONS: WEATHER.querySelectorAll('.presents .selects button'),
-            TABS: {
-                NODES: WEATHER.querySelectorAll('.presents .description > *'),
-                NOW: {
-                    NODE: WEATHER.querySelector('.presents .description > .now'),
-                    VALUES: WEATHER.querySelectorAll('.presents .description > .now .value'),
-                },
-                DETAILS: {
-                    NODE: WEATHER.querySelector('.presents .description > .details'),
-                    VALUES: WEATHER.querySelectorAll('.presents .description > .details .value'),
-                }, 
-                FORECAST: {
-                    NODE: WEATHER.querySelector('.presents .description > .forecast'),
-                    VALUES: WEATHER.querySelectorAll('.presents .description > .forecast .value'),       
-                    LIST: {
-                        NODE: WEATHER.querySelector('.presents .description > .forecast .details'),
-                        TEMPLATE:  WEATHER.querySelector('.presents .description > .forecast .details li'),
-                        fill(list) {
-                            list.forEach( item => {
-                                const weatherNode = UI.WEATHER.DISPLAY.TABS.FORECAST.LIST.TEMPLATE.cloneNode(true);
-                                const weatherNodeFields = weatherNode.querySelectorAll('.value');
-                                
-                                weatherNodeFields[0].textContent = item.date;
-                                weatherNodeFields[1].textContent = item.time;
-                                weatherNodeFields[2].textContent = item.temp;
-                                weatherNodeFields[3].textContent = item.feels;
-                                weatherNodeFields[4].textContent = item.main;
-                                weatherNodeFields[5].src = item.icon;
-                                
-                                UI.WEATHER.DISPLAY.TABS.FORECAST.LIST.NODE.append(weatherNode);
-                            });
-                        },
-                        clear() {
-                            const collection = UI.WEATHER.DISPLAY.TABS.FORECAST.LIST.NODE.children;
-        
-                            while(collection.length) {
-                                collection[0].remove();
-                            }
-                        },
-                    },    
-                },
-                clear() {
-                    UI.WEATHER.DISPLAY.TABS.NODES.forEach( tab => {
-                        tab.classList.remove('active');
-                    });
-                    UI.WEATHER.DISPLAY.BUTTONS.forEach( button => {
-                        button.classList.remove('active');
-                    });
-                },
-                select(index) {
-                    UI.WEATHER.DISPLAY.TABS.NODES[index].classList.add('active');
-                    UI.WEATHER.DISPLAY.BUTTONS[index].classList.add('active');
-                },
-                update(weather) {
-                    weather.like ? UI.WEATHER.FAVORITE.like() : UI.WEATHER.FAVORITE.dislike();
+        setTimeout( () => deactivate(NOTIFICATION) , 2000);
+    },
+    setLike(liked) {
+        liked ? activate(LIKE) : deactivate(LIKE);
+    }, 
+    initForecast(size) {
 
-                    const nowTab = UI.WEATHER.DISPLAY.TABS.NOW.VALUES;
-                    const detailsTab = UI.WEATHER.DISPLAY.TABS.DETAILS.VALUES;
-                    const forecastTab = UI.WEATHER.DISPLAY.TABS.FORECAST;
-                    
-                    nowTab[0].src = weather.icon;
-                    nowTab[1].textContent = detailsTab[1].textContent = weather.temp;
-                    nowTab[2].textContent = detailsTab[0].textContent = weather.city;
-                    detailsTab[2].textContent = weather.feels;
-                    detailsTab[3].textContent = weather.main;
-                    detailsTab[4].textContent = weather.sunrise;
-                    detailsTab[5].textContent = weather.sunset;
+    },
+    updateTabs(data) {
+        fillTab(TABS.FORECAST, data);
+        fillTab(TABS.DETAILS, data);
 
-                    forecastTab.NODE.firstElementChild.textContent = weather.city;
-                    
-                    forecastTab.LIST.clear();
-                    forecastTab.LIST.fill(weather.forecast);
-                },
-            },
-        },
-        FAVORITE: {
-            NODE: WEATHER.querySelector('.favourite .locations .city'),
-            LIKE: WEATHER.querySelector('.like'),
-            LIST:  {
-                NODE: WEATHER.querySelector('.favourite .locations'),
-                TEMPLATE: WEATHER.querySelector('.favourite .locations .city'),
-                add(cityName, selectCallback, removeCallback) {
-                    const cityNode = UI.WEATHER.FAVORITE.LIST.TEMPLATE.cloneNode(true);
-    
-                    cityNode.firstElementChild.textContent = cityName;
-    
-                    cityNode.firstElementChild.addEventListener('click', () => {
-                        selectCallback(cityName);
-                        UI.WEATHER.FAVORITE.like();
-                    });      
-    
-                    cityNode.lastElementChild.addEventListener('click', () => {
-                        removeCallback(cityName);
-                        cityNode.remove();
-                    });
-    
-                    UI.WEATHER.FAVORITE.LIST.NODE.prepend(cityNode);
-                },
-                remove(cityName) {
-                    Array.from(UI.WEATHER.FAVORITE.LIST.NODE.children).forEach(node => { 
-                        if(node.firstElementChild.textContent == cityName) {
-                            node.remove();
-                        }
-                    })
-                },
-                clear() {
-                    const nodes = UI.WEATHER.FAVORITE.LIST.NODE.children;
-                    while(nodes.length) {
-                        nodes[0].remove();
-                    }
-                }
-            },
-            like() {
-                UI.WEATHER.FAVORITE.LIKE.classList.add('active')   
-            }, 
-            dislike() {
-                UI.WEATHER.FAVORITE.LIKE.classList.remove('active');
-            },
-        }
+        TABS.FORECAST.firstElementChild.textContent = data.city;
+
+        TABS.FORECAST.forEach( (node, index) => 
+            fillTab(node, data.list[index])               
+        );
+    },
+    addFavorite(city) {
+        const node = TEMPLATES.FAVORITES.cloneNode(true);
+
+        node.firstElementChild.textContent = city;
+
+        FAVORITES.prepend(node);
+        FAVORITES.dispatchEvent( new CustomEvent('add', { detail: { city, node } }));
+    },
+    removeFavorite(city) {
+        Array.from(FAVORITES.children).filter(node => { 
+            if(node.firstElementChild.textContent == city) node.remove();
+        })   
     }
 };
+
+function createEvent(node, name, detail) {
+    node.dispatchEvent( new CustomEvent(name, { detail }) );
+}
+
+function activate(node) {
+    node.classList.add('active');
+}
+
+function deactivate(node) {
+    node.classList.remove('active');
+}
+
+function clearContainer(container) {
+    while(container.length) container[0].remove();
+}
+
+function fillTab(tab, entries) {
+    entries.forEach(([key, value]) => {
+        const node = tab.querySelector(`.${key}`);
+        if(key == 'icon') {
+            node.src = value;
+            return;
+        }
+        node.textContent = value;
+        //node[key == 'icon' ? 'src' : 'textContent'] = value;
+    });
+}
+
+BUTTONS.forEach( (button, index) => {
+    button.addEventListener('click', () => {
+        TABS.COLLECTION.forEach(deactivate);
+        activate(TABS.COLLECTION[index]);
+
+        BUTTONS.forEach(deactivate);
+        activate(BUTTONS[index]);
+    });
+});
