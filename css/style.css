@@ -648,7 +648,7 @@ body {
     flex-direction: column;
 }
 
-.weather__deck .forecast .date, .weather__deck .forecast .stats  {
+.weather__deck .forecast .date__time, .weather__deck .forecast .stats  {
     display: flex;
     justify-content: space-between;
 }

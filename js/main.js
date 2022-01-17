@@ -17,24 +17,13 @@ function changeLike() {
     CONTROLS.setLike(STORAGE.isFavorite(STORAGE.getCity()));
 }
 
-function removeCity(city) {
-    CONTROLS.removeFavorite(city)
-    STORAGE.removeFavorite(city)
-}
-
-function addCity(city) {
-    CONTROLS.addFavorite(city);
-    STORAGE.addFavorite(city);
-}
-
 NODES.FAVORITES.addEventListener('add', event => {
     const city = event.detail.city;
 
-    const favoriteNode = event.detail.node;
+    STORAGE.addFavorite(city);
 
-    favoriteNode.lastElementChild.addEventListener('click', () => {
-        removeCity(city);
-        changeLike();
+    event.detail.node.lastElementChild.addEventListener('click', () => {
+        CONTROLS.removeFavorite(city);
     });
 
     event.detail.node.firstElementChild.addEventListener('click', () => {
@@ -42,13 +31,17 @@ NODES.FAVORITES.addEventListener('add', event => {
     });
     
     changeLike();
-})
+});
+
+NODES.FAVORITES.addEventListener('remove', event => {
+    STORAGE.removeFavorite(event.detail.city);
+    changeLike();
+});
 
 NODES.LIKE.addEventListener('click', () => {
     const city = STORAGE.getCity();
-    if(!city) return;
 
-    STORAGE.isFavorite(city) ? removeCity(city) : addCity(city);
+    STORAGE.isFavorite(city) ? CONTROLS.removeFavorite(city) : CONTROLS.addFavorite(city);
 });
 
 NODES.FORM.addEventListener('submit', event => {  
@@ -64,11 +57,8 @@ NODES.BUTTONS.forEach((button, index) => {
     });
 })
 
-NODES.BUTTONS[STORAGE.getTab()].click();
-
-//const lastCity = STORAGE.LAST.CITY.get();
-//updateWeather(STORAGE.getCity() || 'City');
-//NODES.FORM.city.value = 'City';
-//NODES.FORM.click();
+NODES.BUTTONS[STORAGE.getTab() || 0].click();
 
 STORAGE.getFavorites().forEach( CONTROLS.addFavorite );
+
+updateWeather(STORAGE.getCity() || 'City');

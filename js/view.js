@@ -1,32 +1,34 @@
 const WEATHER = document.querySelector('#weather');
 
-const FORM = document.forms.weather;
 const NOTIFICATION = WEATHER.querySelector('.form__notification');
-const LIKE = WEATHER.querySelector('.like');
+const FORECAST = WEATHER.querySelector('.presents .description > .forecast');
 
 const TABS = {
     COLLECTION: WEATHER.querySelectorAll('.presents .description > *'),
     NOW: WEATHER.querySelector('.presents .description > .now'),
     DETAILS: WEATHER.querySelector('.presents .description > .details'),
-    FORECAST: WEATHER.querySelector('.presents .description > .forecast')
+    FORECAST: {
+        CITY: FORECAST.querySelector('.city'),
+        LIST: FORECAST.querySelector('.details'),
+        SIZE: 20
+    }
 }
-const BUTTONS = WEATHER.querySelectorAll('.presents .selects button');
-
-const DISPLAY = WEATHER.querySelector('.presents .description');
 
 const TEMPLATES = {
     FAVORITES: WEATHER.querySelector('.favourite .locations .city'),
-    FORECAST: WEATHER.querySelector('.presents .description > .forecast .details li'),
+    FORECAST: FORECAST.querySelector('.presents .description > .forecast .details li'),
 }
 
+const FORM = document.forms.weather;
+const LIKE = WEATHER.querySelector('.like')
+const BUTTONS = WEATHER.querySelectorAll('.presents .selects button');
 const FAVORITES = WEATHER.querySelector('.favourite .locations');
 
 export const NODES = {
     FORM,
     LIKE,
-    DISPLAY,
     BUTTONS,
-    FAVORITES,
+    FAVORITES
 };
 
 export const CONTROLS = {
@@ -40,17 +42,22 @@ export const CONTROLS = {
         liked ? activate(LIKE) : deactivate(LIKE);
     }, 
     initForecast(size) {
+        clearChildren(TABS.FORECAST.LIST);
 
+        for(let i = 0; i < size; i++) {
+            const node = TEMPLATES.FORECAST.cloneNode(true);
+            TABS.FORECAST.LIST.prepend(node);
+        }
     },
     updateTabs(data) {
-        fillTab(TABS.FORECAST, data);
+        fillTab(TABS.NOW, data);
         fillTab(TABS.DETAILS, data);
 
-        TABS.FORECAST.firstElementChild.textContent = data.city;
+        TABS.FORECAST.CITY.textContent = data.city;
 
-        TABS.FORECAST.forEach( (node, index) => 
-            fillTab(node, data.list[index])               
-        );
+        Array.from(TABS.FORECAST.LIST.children).forEach( (node, index) => {
+            if(data.forecast.length > index) fillTab(node, data.forecast[index]); 
+        });
     },
     addFavorite(city) {
         const node = TEMPLATES.FAVORITES.cloneNode(true);
@@ -58,17 +65,26 @@ export const CONTROLS = {
         node.firstElementChild.textContent = city;
 
         FAVORITES.prepend(node);
-        FAVORITES.dispatchEvent( new CustomEvent('add', { detail: { city, node } }));
+        createEvent(FAVORITES, 'add', { city, node });
     },
     removeFavorite(city) {
         Array.from(FAVORITES.children).filter(node => { 
             if(node.firstElementChild.textContent == city) node.remove();
-        })   
+            createEvent(FAVORITES, 'remove', { city, node });
+        });  
     }
 };
 
 function createEvent(node, name, detail) {
     node.dispatchEvent( new CustomEvent(name, { detail }) );
+}
+
+function fillTab(tab, data) {
+    Object.entries(data).forEach(([key, value]) => {
+        const node = tab.querySelector(`.${key}`);
+
+        if(node) node[key == 'icon' ? 'src' : 'textContent'] = value;
+    });
 }
 
 function activate(node) {
@@ -77,22 +93,6 @@ function activate(node) {
 
 function deactivate(node) {
     node.classList.remove('active');
-}
-
-function clearContainer(container) {
-    while(container.length) container[0].remove();
-}
-
-function fillTab(tab, entries) {
-    entries.forEach(([key, value]) => {
-        const node = tab.querySelector(`.${key}`);
-        if(key == 'icon') {
-            node.src = value;
-            return;
-        }
-        node.textContent = value;
-        //node[key == 'icon' ? 'src' : 'textContent'] = value;
-    });
 }
 
 BUTTONS.forEach( (button, index) => {
@@ -104,3 +104,11 @@ BUTTONS.forEach( (button, index) => {
         activate(BUTTONS[index]);
     });
 });
+
+function clearChildren(node) {
+    while(node.children.length) node.children[0].remove();
+}
+
+clearChildren(FAVORITES);
+
+CONTROLS.initForecast(TABS.FORECAST.SIZE);
