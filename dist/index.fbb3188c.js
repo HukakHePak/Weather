@@ -522,10 +522,11 @@ function hmrAcceptRun(bundle, id) {
 var _viewJs = require("./view.js");
 var _storageJs = require("./storage.js");
 var _apiJs = require("./api.js");
+var _cookieJs = require("./cookie.js");
 async function updateWeather(cityName) {
     if (!cityName) return;
     _apiJs.requestWeather(cityName).then((response)=>{
-        _storageJs.storage.setCity(response.city);
+        _cookieJs.cookie.saveCity(response.city);
         changeLike();
         _viewJs.controls.updateTabs(response);
     }).catch((error)=>{
@@ -534,7 +535,7 @@ async function updateWeather(cityName) {
     });
 }
 function changeLike() {
-    _viewJs.controls.setLike(_storageJs.storage.isFavorite(_storageJs.storage.getCity()));
+    _viewJs.controls.setLike(_storageJs.storage.isFavorite(_cookieJs.cookie.getCity()));
 }
 _viewJs.NODES.FAVORITES.addEventListener('add', (event)=>{
     const city = event.detail.city;
@@ -552,7 +553,7 @@ _viewJs.NODES.FAVORITES.addEventListener('remove', (event)=>{
     changeLike();
 });
 _viewJs.NODES.LIKE.addEventListener('click', ()=>{
-    const city = _storageJs.storage.getCity();
+    const city = _cookieJs.cookie.getCity();
     _storageJs.storage.isFavorite(city) ? _viewJs.controls.removeFavorite(city) : _viewJs.controls.addFavorite(city);
 });
 _viewJs.NODES.FORM.addEventListener('submit', (event)=>{
@@ -565,9 +566,12 @@ _viewJs.NODES.BUTTONS.forEach((button, index)=>button.addEventListener('click', 
 );
 _viewJs.NODES.BUTTONS[_storageJs.storage.getTab() || 0].click();
 _storageJs.storage.getFavorites().forEach(_viewJs.controls.addFavorite);
-updateWeather(_storageJs.storage.getCity() || 'City');
+updateWeather(_cookieJs.cookie.getCity());
+//cookie.saveCity('york');
+console.log(document.cookie);
+console.log(_cookieJs.cookie.getCity());
 
-},{"./view.js":"2GA9o","./storage.js":"j1l1C","./api.js":"6yDOL"}],"2GA9o":[function(require,module,exports) {
+},{"./view.js":"2GA9o","./storage.js":"j1l1C","./api.js":"6yDOL","./cookie.js":"iflT4"}],"2GA9o":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 parcelHelpers.export(exports, "NODES", ()=>NODES
@@ -3826,6 +3830,25 @@ var monthsInYear = 12;
 var quartersInYear = 4;
 var secondsInHour = 3600;
 var secondsInMinute = 60;
+
+},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"iflT4":[function(require,module,exports) {
+var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "cookie", ()=>cookie
+);
+const cookie = {
+    saveCity (city) {
+        document.cookie = 'city=' + encodeURIComponent(city) + '; max-age = 3600';
+    },
+    getCity () {
+        try {
+            return decodeURIComponent(document.cookie.split('; ').find((cook)=>cook.split('=')[0] === 'city'
+            ).split('=')[1]);
+        } catch  {
+            return 'City';
+        }
+    }
+};
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}]},["aIdiY","bDbGG"], "bDbGG", "parcelRequire8fb7")
 

@@ -1,12 +1,13 @@
 import { NODES, controls } from './view.js';
 import { storage } from './storage.js';
 import { requestWeather } from './api.js';
+import { cookie } from './cookie.js';
 
 async function updateWeather(cityName) {
     if(!cityName) return;
 
     requestWeather(cityName).then(response => {
-        storage.setCity(response.city);
+        cookie.saveCity(response.city);
         
         changeLike();
         controls.updateTabs(response);
@@ -17,7 +18,7 @@ async function updateWeather(cityName) {
 }
 
 function changeLike() {
-    controls.setLike( storage.isFavorite( storage.getCity() ) );
+    controls.setLike( storage.isFavorite( cookie.getCity() ) );
 }
 
 NODES.FAVORITES.addEventListener('add', event => {
@@ -42,7 +43,7 @@ NODES.FAVORITES.addEventListener('remove', event => {
 });
 
 NODES.LIKE.addEventListener('click', () => {
-    const city = storage.getCity();
+    const city = cookie.getCity();
 
     storage.isFavorite(city) ? controls.removeFavorite(city) : controls.addFavorite(city);
 });
@@ -62,4 +63,9 @@ NODES.BUTTONS[storage.getTab() || 0].click();
 
 storage.getFavorites().forEach( controls.addFavorite );
 
-updateWeather(storage.getCity() || 'City');
+updateWeather(cookie.getCity());
+
+
+//cookie.saveCity('york');
+console.log(document.cookie);
+console.log(cookie.getCity());
