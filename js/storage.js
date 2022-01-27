@@ -4,7 +4,7 @@ const KEYS = {
     FAVORITES: 'current_list_favorites'
 };
 
-export const STORAGE = {
+export const storage = {
     getFavorites() {
         try {
             return new Set(JSON.parse(localStorage.getItem(KEYS.FAVORITES)));
@@ -14,15 +14,15 @@ export const STORAGE = {
         localStorage.setItem(KEYS.FAVORITES, JSON.stringify([...favorites]));
     },
     addFavorite(favorite) {
-        STORAGE.setFavorites(STORAGE.getFavorites().add(favorite));
+        storage.setFavorites(storage.getFavorites().add(favorite));
     },
     removeFavorite(favorite) {
-        const favorites = STORAGE.getFavorites();
+        const favorites = storage.getFavorites();
         favorites.delete(favorite);
-        STORAGE.setFavorites(favorites);
+        storage.setFavorites(favorites);
     },
     isFavorite(city) {
-        return STORAGE.getFavorites().has(city);
+        return storage.getFavorites().has(city);
     },
     getTab() {
         return localStorage.getItem(KEYS.LASTAB);

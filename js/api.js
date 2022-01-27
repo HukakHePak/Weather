@@ -1,3 +1,5 @@
+import { format } from "date-fns";
+
 export const URLS = {
     CURRENT: 'https://api.openweathermap.org/data/2.5/weather',
     FORECAST: 'https://api.openweathermap.org/data/2.5/forecast',
@@ -35,9 +37,12 @@ function toCelcius(temperature) {
 }
 
 function convertDate(milisec) {
+    if(!milisec) return { };
+
     const date = new Date(milisec * 1000);
+    
     return {
-        time: date.getHours() + ':' + date.getMinutes(),
-        date: date.getDate()  + ' ' + date.toLocaleString('en', { month: 'short' })
+        time: format(date, 'HH:mm'),
+        date: format(date, 'dd LLL')
     }
 }

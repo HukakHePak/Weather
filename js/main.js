@@ -1,32 +1,32 @@
-import { NODES, CONTROLS } from './view.js'
-import { STORAGE } from './storage.js';
+import { NODES, controls } from './view.js'
+import { storage } from './storage.js';
 import { requestWeather } from './api.js';
 
 async function updateWeather(cityName) {
     if(!cityName) return;
 
     requestWeather(cityName).then(response => {
-        STORAGE.setCity(response.city);
+        storage.setCity(response.city);
         
         changeLike();
-        CONTROLS.updateTabs(response);
+        controls.updateTabs(response);
     }).catch( error => {
         console.log(error);
-        CONTROLS.notify('Unknow city');
+        controls.notify('Unknow city');
     });
 }
 
 function changeLike() {
-    CONTROLS.setLike(STORAGE.isFavorite(STORAGE.getCity()));
+    controls.setLike(storage.isFavorite(storage.getCity()));
 }
 
 NODES.FAVORITES.addEventListener('add', event => {
     const city = event.detail.city;
 
-    STORAGE.addFavorite(city);
+    storage.addFavorite(city);
 
     event.detail.node.lastElementChild.addEventListener('click', () => {
-        CONTROLS.removeFavorite(city);
+        controls.removeFavorite(city);
     });
 
     event.detail.node.firstElementChild.addEventListener('click', () => {
@@ -37,14 +37,14 @@ NODES.FAVORITES.addEventListener('add', event => {
 });
 
 NODES.FAVORITES.addEventListener('remove', event => {
-    STORAGE.removeFavorite(event.detail.city);
+    storage.removeFavorite(event.detail.city);
     changeLike();
 });
 
 NODES.LIKE.addEventListener('click', () => {
-    const city = STORAGE.getCity();
+    const city = storage.getCity();
 
-    STORAGE.isFavorite(city) ? CONTROLS.removeFavorite(city) : CONTROLS.addFavorite(city);
+    storage.isFavorite(city) ? controls.removeFavorite(city) : controls.addFavorite(city);
 });
 
 NODES.FORM.addEventListener('submit', event => {  
@@ -55,13 +55,11 @@ NODES.FORM.addEventListener('submit', event => {
 });
 
 NODES.BUTTONS.forEach((button, index) => {
-    button.addEventListener('click', () => {
-        STORAGE.setTab(index);
-    });
+    button.addEventListener('click', () => storage.setTab(index) );
 })
 
-NODES.BUTTONS[STORAGE.getTab() || 0].click();
+NODES.BUTTONS[storage.getTab() || 0].click();
 
-STORAGE.getFavorites().forEach( CONTROLS.addFavorite );
+storage.getFavorites().forEach( controls.addFavorite );
 
-updateWeather(STORAGE.getCity() || 'City');
+updateWeather(storage.getCity() || 'City');
