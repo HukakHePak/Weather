@@ -8,7 +8,7 @@ export const storage = {
     getFavorites() {
         try {
             return new Set(JSON.parse(localStorage.getItem(KEYS.FAVORITES)));
-        } catch { return new Set() };
+        } catch { return new Set(); }
     },
     setFavorites(favorites) {
         localStorage.setItem(KEYS.FAVORITES, JSON.stringify([...favorites]));
@@ -36,4 +36,4 @@ export const storage = {
     setCity(city) {
         localStorage.setItem(KEYS.LASTCITY, city);
     }   
-}
+};

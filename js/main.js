@@ -1,4 +1,4 @@
-import { NODES, controls } from './view.js'
+import { NODES, controls } from './view.js';
 import { storage } from './storage.js';
 import { requestWeather } from './api.js';
 
@@ -17,7 +17,7 @@ async function updateWeather(cityName) {
 }
 
 function changeLike() {
-    controls.setLike(storage.isFavorite(storage.getCity()));
+    controls.setLike( storage.isFavorite( storage.getCity() ) );
 }
 
 NODES.FAVORITES.addEventListener('add', event => {
@@ -54,9 +54,9 @@ NODES.FORM.addEventListener('submit', event => {
     event.preventDefault();
 });
 
-NODES.BUTTONS.forEach((button, index) => {
-    button.addEventListener('click', () => storage.setTab(index) );
-})
+NODES.BUTTONS.forEach((button, index) => 
+    button.addEventListener('click', () => storage.setTab(index) )
+);
 
 NODES.BUTTONS[storage.getTab() || 0].click();
 

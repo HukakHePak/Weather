@@ -560,10 +560,9 @@ _viewJs.NODES.FORM.addEventListener('submit', (event)=>{
     _viewJs.NODES.FORM.reset();
     event.preventDefault();
 });
-_viewJs.NODES.BUTTONS.forEach((button, index)=>{
-    button.addEventListener('click', ()=>_storageJs.storage.setTab(index)
-    );
-});
+_viewJs.NODES.BUTTONS.forEach((button, index)=>button.addEventListener('click', ()=>_storageJs.storage.setTab(index)
+    )
+);
 _viewJs.NODES.BUTTONS[_storageJs.storage.getTab() || 0].click();
 _storageJs.storage.getFavorites().forEach(_viewJs.controls.addFavorite);
 updateWeather(_storageJs.storage.getCity() || 'City');
@@ -575,27 +574,27 @@ parcelHelpers.export(exports, "NODES", ()=>NODES
 );
 parcelHelpers.export(exports, "controls", ()=>controls
 );
-const WEATHER = document.querySelector("#weather");
-const NOTIFICATION = WEATHER.querySelector(".form__notification");
-const FORECAST = WEATHER.querySelector(".presents .description > .forecast");
+const WEATHER = document.querySelector('#weather');
+const NOTIFICATION = WEATHER.querySelector('.form__notification');
+const FORECAST = WEATHER.querySelector('.presents .description > .forecast');
 const TABS = {
-    COLLECTION: WEATHER.querySelectorAll(".presents .description > *"),
-    NOW: WEATHER.querySelector(".presents .description > .now"),
-    DETAILS: WEATHER.querySelector(".presents .description > .details"),
+    COLLECTION: WEATHER.querySelectorAll('.presents .description > *'),
+    NOW: WEATHER.querySelector('.presents .description > .now'),
+    DETAILS: WEATHER.querySelector('.presents .description > .details'),
     FORECAST: {
-        CITY: FORECAST.querySelector(".city"),
-        LIST: FORECAST.querySelector(".details"),
+        CITY: FORECAST.querySelector('.city'),
+        LIST: FORECAST.querySelector('.details'),
         SIZE: 20
     }
 };
 const TEMPLATES = {
-    FAVORITES: WEATHER.querySelector(".favourite .locations .city"),
-    FORECAST: FORECAST.querySelector(".presents .description > .forecast .details li")
+    FAVORITES: WEATHER.querySelector('.favourite .locations .city'),
+    FORECAST: FORECAST.querySelector('.presents .description > .forecast .details li')
 };
 const FORM = document.forms.weather;
-const LIKE = WEATHER.querySelector(".like");
-const BUTTONS = WEATHER.querySelectorAll(".presents .selects button");
-const FAVORITES = WEATHER.querySelector(".favourite .locations");
+const LIKE = WEATHER.querySelector('.like');
+const BUTTONS = WEATHER.querySelectorAll('.presents .selects button');
+const FAVORITES = WEATHER.querySelector('.favourite .locations');
 const NODES = {
     FORM,
     LIKE,
@@ -631,7 +630,7 @@ const controls = {
         const node = TEMPLATES.FAVORITES.cloneNode(true);
         node.firstElementChild.textContent = city;
         FAVORITES.prepend(node);
-        createEvent(FAVORITES, "add", {
+        createEvent(FAVORITES, 'add', {
             city,
             node
         });
@@ -639,7 +638,7 @@ const controls = {
     removeFavorite (city) {
         Array.from(FAVORITES.children).filter((node)=>{
             if (node.firstElementChild.textContent == city) node.remove();
-            createEvent(FAVORITES, "remove", {
+            createEvent(FAVORITES, 'remove', {
                 city,
                 node
             });
@@ -654,17 +653,17 @@ function createEvent(node, name, detail) {
 function fillTab(tab, data) {
     Object.entries(data).forEach(([key, value])=>{
         const node = tab.querySelector(`.${key}`);
-        if (node) node[key == "icon" ? "src" : "textContent"] = value;
+        if (node) node[key == 'icon' ? 'src' : 'textContent'] = value;
     });
 }
 function activate(node) {
-    node.classList.add("active");
+    node.classList.add('active');
 }
 function deactivate(node) {
-    node.classList.remove("active");
+    node.classList.remove('active');
 }
 BUTTONS.forEach((button, index)=>{
-    button.addEventListener("click", ()=>{
+    button.addEventListener('click', ()=>{
         TABS.COLLECTION.forEach(deactivate);
         activate(TABS.COLLECTION[index]);
         BUTTONS.forEach(deactivate);
