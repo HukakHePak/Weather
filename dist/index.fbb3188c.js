@@ -587,8 +587,7 @@ const TABS = {
     DETAILS: WEATHER.querySelector('.presents .description > .details'),
     FORECAST: {
         CITY: FORECAST.querySelector('.city'),
-        LIST: FORECAST.querySelector('.details'),
-        SIZE: 20
+        LIST: FORECAST.querySelector('.details')
     }
 };
 const TEMPLATES = {
@@ -614,13 +613,6 @@ const controls = {
     },
     setLike (liked) {
         liked ? activate(LIKE) : deactivate(LIKE);
-    },
-    initForecast (size) {
-        clearChildren(TABS.FORECAST.LIST);
-        for(let i = 0; i < size; i++){
-            const node = TEMPLATES.FORECAST.cloneNode(true);
-            TABS.FORECAST.LIST.prepend(node);
-        }
     },
     updateTabs (data) {
         fillTab(TABS.NOW, data);
@@ -674,11 +666,17 @@ BUTTONS.forEach((button, index)=>{
         activate(BUTTONS[index]);
     });
 });
-function clearChildren(node) {
+function clearContainer(node) {
     while(node.children.length)node.children[0].remove();
 }
-clearChildren(FAVORITES);
-controls.initForecast(TABS.FORECAST.SIZE);
+clearContainer(FAVORITES);
+function createList(size, lastNode) {
+    if (size == lastNode.parentElement.children.length) return;
+    const newNode = lastNode.cloneNode(true);
+    lastNode.after(newNode);
+    createList(size, newNode);
+}
+createList(21, TEMPLATES.FORECAST);
 
 },{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"gkKU3":[function(require,module,exports) {
 exports.interopDefault = function(a) {

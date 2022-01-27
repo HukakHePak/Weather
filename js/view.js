@@ -10,7 +10,6 @@ const TABS = {
     FORECAST: {
         CITY: FORECAST.querySelector('.city'),
         LIST: FORECAST.querySelector('.details'),
-        SIZE: 20
     }
 };
 
@@ -41,14 +40,6 @@ export const controls = {
     setLike(liked) {
         liked ? activate(LIKE) : deactivate(LIKE);
     }, 
-    initForecast(size) {
-        clearChildren(TABS.FORECAST.LIST);
-
-        for(let i = 0; i < size; i++) {
-            const node = TEMPLATES.FORECAST.cloneNode(true);
-            TABS.FORECAST.LIST.prepend(node);
-        }
-    },
     updateTabs(data) {
         fillTab(TABS.NOW, data);
         fillTab(TABS.DETAILS, data);
@@ -105,10 +96,19 @@ BUTTONS.forEach( (button, index) => {
     });
 });
 
-function clearChildren(node) {
+function clearContainer(node) {
     while(node.children.length) node.children[0].remove();
 }
 
-clearChildren(FAVORITES);
+clearContainer(FAVORITES);
 
-controls.initForecast(TABS.FORECAST.SIZE);
+function createList(size, lastNode) {
+    if(size == lastNode.parentElement.children.length) return;
+
+    const newNode = lastNode.cloneNode(true);
+    lastNode.after(newNode);
+
+    createList(size, newNode);
+}
+
+createList(21, TEMPLATES.FORECAST);
