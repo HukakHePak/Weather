@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie';
+
 export const cookie = {
     saveCity(city) {
         document.cookie = 'city=' + encodeURIComponent(city) + '; max-age = 3600';
@@ -8,5 +10,11 @@ export const cookie = {
         } catch {
             return 'City';
         }
+    },
+    saveTab(tabIndex) {
+        Cookies.set('tab', tabIndex, { 'max-age': '3600' });
+    },
+    getTab() {
+        return Cookies.get('tab') || 0;
     }
 };

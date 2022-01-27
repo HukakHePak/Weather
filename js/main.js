@@ -56,10 +56,10 @@ NODES.FORM.addEventListener('submit', event => {
 });
 
 NODES.BUTTONS.forEach((button, index) => 
-    button.addEventListener('click', () => storage.setTab(index) )
+    button.addEventListener('click', () => cookie.saveTab(index) )
 );
 
-NODES.BUTTONS[storage.getTab() || 0].click();
+NODES.BUTTONS[cookie.getTab() || 0].click();
 
 storage.getFavorites().forEach( controls.addFavorite );
 
