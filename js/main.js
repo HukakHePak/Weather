@@ -64,8 +64,3 @@ NODES.BUTTONS[cookie.getTab() || 0].click();
 storage.getFavorites().forEach( controls.addFavorite );
 
 updateWeather(cookie.getCity());
-
-
-//cookie.saveCity('york');
-console.log(document.cookie);
-console.log(cookie.getCity());

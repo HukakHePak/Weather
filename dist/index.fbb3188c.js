@@ -567,9 +567,6 @@ _viewJs.NODES.BUTTONS.forEach((button, index)=>button.addEventListener('click', 
 _viewJs.NODES.BUTTONS[_cookieJs.cookie.getTab() || 0].click();
 _storageJs.storage.getFavorites().forEach(_viewJs.controls.addFavorite);
 updateWeather(_cookieJs.cookie.getCity());
-//cookie.saveCity('york');
-console.log(document.cookie);
-console.log(_cookieJs.cookie.getCity());
 
 },{"./view.js":"2GA9o","./storage.js":"j1l1C","./api.js":"6yDOL","./cookie.js":"iflT4"}],"2GA9o":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
@@ -711,8 +708,34 @@ exports.export = function(dest, destName, get) {
 },{}],"j1l1C":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "Storage", ()=>Storage
+);
 parcelHelpers.export(exports, "storage", ()=>storage
 );
+class Storage {
+    constructor(key, options){
+        this.key = key;
+        this.default = options?.value;
+        this.storage = options?.isSession ? sessionStorage : localStorage;
+        this.set();
+    }
+    get() {
+        try {
+            return JSON.parse(this.storage.getItem(this.key));
+        } catch  {
+            return;
+        }
+    }
+    set(value = this.default) {
+        this.storage.setItem(this.key, JSON.stringify(value));
+    }
+    clear() {
+        this.set();
+    }
+    isEmpty() {
+        return !this.get();
+    }
+}
 const KEYS = {
     LASTAB: 'weather_opened_tab',
     LASTCITY: 'last_found_city',
@@ -806,7 +829,7 @@ function convertDate(milisec) {
     };
 }
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","date-fns":"9yHCA"}],"9yHCA":[function(require,module,exports) {
+},{"date-fns":"9yHCA","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"9yHCA":[function(require,module,exports) {
 var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
 parcelHelpers.defineInteropFlag(exports);
 // This file is generated automatically by `scripts/build/indices.js`. Please, don't change it.
@@ -3858,7 +3881,7 @@ const cookie = {
     }
 };
 
-},{"@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3","js-cookie":"c8bBu"}],"c8bBu":[function(require,module,exports) {
+},{"js-cookie":"c8bBu","@parcel/transformer-js/src/esmodule-helpers.js":"gkKU3"}],"c8bBu":[function(require,module,exports) {
 (function(global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() : typeof define === 'function' && define.amd ? define(factory) : (global = global || self, (function() {
         var current = global.Cookies;

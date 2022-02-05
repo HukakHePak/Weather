@@ -1,3 +1,40 @@
+
+export class Storage {
+    constructor(key, options) {
+        this.key = key;
+        this.default = options?.value;
+        this.storage = options?.isSession ? sessionStorage : localStorage;
+        this.set();
+    }
+
+    get() {
+        try {
+            return JSON.parse(this.storage.getItem(this.key)); 
+        }
+        catch {
+            return;
+        }
+    }
+
+    set(value = this.default) {
+        this.storage.setItem(this.key, JSON.stringify(value));
+    }
+
+    clear() {
+        this.set();
+    }
+
+    isEmpty() {
+        return !this.get();
+    }
+}
+
+
+
+
+
+
+
 const KEYS = {
     LASTAB: 'weather_opened_tab',
     LASTCITY: 'last_found_city',
