@@ -12,7 +12,7 @@ export class Storage {
             return JSON.parse(this.storage.getItem(this.key)); 
         }
         catch {
-            return;
+            return null;
         }
     }
 
@@ -21,7 +21,7 @@ export class Storage {
     }
 
     clear() {
-        this.set();
+        this.set(null);
     }
 
     isEmpty() {
@@ -45,7 +45,9 @@ export const storage = {
     getFavorites() {
         try {
             return new Set(JSON.parse(localStorage.getItem(KEYS.FAVORITES)));
-        } catch { return new Set(); }
+        } catch { 
+            return new Set(); 
+        }
     },
     setFavorites(favorites) {
         localStorage.setItem(KEYS.FAVORITES, JSON.stringify([...favorites]));
@@ -56,6 +58,7 @@ export const storage = {
     removeFavorite(favorite) {
         const favorites = storage.getFavorites();
         favorites.delete(favorite);
+        
         storage.setFavorites(favorites);
     },
     isFavorite(city) {

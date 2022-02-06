@@ -723,14 +723,14 @@ class Storage {
         try {
             return JSON.parse(this.storage.getItem(this.key));
         } catch  {
-            return;
+            return null;
         }
     }
     set(value = this.default) {
         this.storage.setItem(this.key, JSON.stringify(value));
     }
     clear() {
-        this.set();
+        this.set(null);
     }
     isEmpty() {
         return !this.get();
